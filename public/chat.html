@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat - Blood Donation App</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    if (!localStorage.getItem('token')) {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Chat</h1>
+    <nav>
+      <a href="index.html">Home</a> |
+      <a href="login.html">Login</a> |
+      <a href="signup.html">Signup</a>
+    </nav>
+  </header>
+  <main>
+    <div id="chatContainer">
+      <h2>Conversation</h2>
+      <div id="messages"></div>
+      <form id="messageForm">
+        <input type="text" id="messageInput" placeholder="Type your message" required>
+        <button type="submit">Send</button>
+      </form>
+      <div>
+        <label for="withUsername">Chat with (username):</label>
+        <input type="text" id="withUsername" placeholder="Enter username" required>
+        <button id="startChatBtn">Start Chat</button>
+      </div>
+    </div>
+    
+    <script>
+      const token = localStorage.getItem('token');
+      let targetUserId = null;
+      
+      function loadMessages(withUserId) {
+        fetch(`/api/messages?withUserId=${withUserId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(response => response.json())
+        .then(messages => {
+          const messagesDiv = document.getElementById('messages');
+          messagesDiv.innerHTML = "";
+          messages.forEach(msg => {
+            const p = document.createElement('p');
+            p.textContent = `${msg.senderId === parseInt(localStorage.getItem('userId')) ? "You" : "User " + msg.senderId}: ${msg.content}`;
+            messagesDiv.appendChild(p);
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching messages:", error);
+        });
+      }
+      
+      document.getElementById('messageForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!targetUserId) {
+          alert("Please start a chat first.");
+          return;
+        }
+        const content = document.getElementById('messageInput').value;
+        fetch('/api/messages', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ receiverId: targetUserId, content })
+        })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('messageInput').value = "";
+          loadMessages(targetUserId);
+        })
+        .catch(error => {
+          console.error("Error sending message:", error);
+        });
+      });
+      
+      document.getElementById('startChatBtn').addEventListener('click', function() {
+        const withUsername = document.getElementById('withUsername').value.trim();
+        if (!withUsername) {
+          alert("Please enter a username.");
+          return;
+        }
+        fetch(`/api/user?username=${encodeURIComponent(withUsername)}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("User not found");
+            }
+            return response.json();
+          })
+          .then(user => {
+            targetUserId = user.id;
+            alert("Chat started with " + user.username);
+            loadMessages(targetUserId);
+          })
+          .catch(error => {
+            console.error("Error looking up user:", error);
+            alert("User not found. Please check the username.");
+          });
+      });
+      
+      setInterval(() => {
+        if (targetUserId) {
+          loadMessages(targetUserId);
+        }
+      }, 3000);
+    </script>
+  </main>
+</body>
+</html>

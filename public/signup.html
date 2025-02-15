@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signup - Blood Donation App</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Signup</h1>
+    <nav>
+      <a href="index.html">Home</a> |
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+  <main>
+    <form id="signupForm">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+      
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      
+      <label for="role">I am a:</label>
+      <select id="role" name="role" required>
+        <option value="">Select Role</option>
+        <option value="donor">Donor</option>
+        <option value="recipient">Recipient</option>
+      </select>
+      
+      <button type="submit">Signup</button>
+    </form>
+    <div id="signupMsg"></div>
+    
+    <script>
+      document.getElementById('signupForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value,
+          role: document.getElementById('role').value
+        };
+        fetch('/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('signupMsg').innerText = data.message;
+          document.getElementById('signupForm').reset();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('signupMsg').innerText = "Error signing up.";
+        });
+      });
+    </script>
+  </main>
+</body>
+</html>

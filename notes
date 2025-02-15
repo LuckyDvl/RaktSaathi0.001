@@ -1,0 +1,22 @@
+request blood, register donor page ----
+
+dropdown menu - district, state
+any health issues - radio button {if yes - define input}
+
+-----------------------
+
+health issues, and previously donated option of the donor should appear on the home page 
+also while registering as a donor their should be an option f uploading their pic in square format and that pic should appear on the home page too
+
+------------------------
+
+ask first if the user wants to donate the blood or they are in need of blood for emergency on home page
+
+------------------------------
+add warning and terms and conditions 
+- messaging feature between donors and recipient
+-------------------------------------
+
+the first thing while opening the home page it should first open login or signup page but once logged in it should not ask for that again untill the session is ended or untill the user has just logged out of the site, add a login page first and give login access to username "errorTeam" and password "123"
+
+chat should come and go to users

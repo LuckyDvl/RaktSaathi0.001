@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blood Donation App - Home</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script>
+    // If no token is in localStorage, redirect to login
+    if (!localStorage.getItem('token')) {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Blood Donation App</h1>
+    <nav>
+      <a href="index.html">Home</a> | 
+      <a href="donor.html">Register as Donor</a> | 
+      <a href="request.html">Request Blood</a> | 
+      <a href="chat.html">Chat</a> | 
+      <button id="logoutBtn">Logout</button>
+    </nav>
+  </header>
+  
+  <!-- Modal Popup -->
+  <div id="userTypeModal" class="modal">
+    <div class="modal-content">
+      <h2>Are you in need of blood?</h2>
+      <p>Or are you interested in donating blood?</p>
+      <button id="needBloodBtn">In Need of Blood</button>
+      <button id="donateBloodBtn">Interested in Donating Blood</button>
+    </div>
+  </div>
+  
+  <main>
+    <!-- Filter Section -->
+    <section id="filterSection">
+      <h2>Filter by District and State</h2>
+      <form id="filterForm">
+        <label for="stateSelect">State:</label>
+        <select id="stateSelect" name="stateSelect" required>
+          <option value="">Select State</option>
+        </select>
+        
+        <label for="districtSelect">District:</label>
+        <select id="districtSelect" name="districtSelect" required>
+          <option value="">Select District</option>
+        </select>
+        
+        <button type="submit">Apply Filter</button>
+      </form>
+    </section>
+    
+    <!-- Registered Donors Section -->
+    <section id="donorsSection" style="display:none;">
+      <h2>Registered Donors</h2>
+      <div id="donorList">
+        <!-- Donor cards will be loaded here -->
+      </div>
+    </section>
+    
+    <!-- Blood Requests Section -->
+    <section id="requestsSection" style="display:none;">
+      <h2>Blood Requests</h2>
+      <div id="requestList">
+        <!-- Blood request cards will be loaded here -->
+      </div>
+    </section>
+  </main>
+  
+  <script src="js/script.js"></script>
+  
+  <!-- Modal and Logout Script -->
+  <script>
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', function(){
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      window.location.href = "login.html";
+    });
+    
+    // Global variable for user type: "need" or "donate"
+    window.userType = "";
+    
+    document.getElementById('needBloodBtn').addEventListener('click', function(){
+      window.userType = "need";
+      document.getElementById('userTypeModal').style.display = 'none';
+      alert("Please select your State and District to view donors available in your area.");
+    });
+    
+    document.getElementById('donateBloodBtn').addEventListener('click', function(){
+      window.userType = "donate";
+      document.getElementById('userTypeModal').style.display = 'none';
+      alert("Please select your State and District to view blood requests in your area.");
+    });
+  </script>
+</body>
+</html>
