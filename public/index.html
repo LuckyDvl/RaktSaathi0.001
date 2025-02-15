@@ -6,7 +6,6 @@
   <title>Blood Donation App - Home</title>
   <link rel="stylesheet" href="css/style.css" />
   <script>
-    // If no token is in localStorage, redirect to login
     if (!localStorage.getItem('token')) {
       window.location.href = "login.html";
     }
@@ -19,12 +18,13 @@
       <a href="index.html">Home</a> | 
       <a href="donor.html">Register as Donor</a> | 
       <a href="request.html">Request Blood</a> | 
-      <a href="chat.html">Chat</a> | 
+      <a href="chat.html">Chat <span id="chatBadge"></span></a> |
+      <a href="profile.html">Customize Profile</a> |
       <button id="logoutBtn">Logout</button>
     </nav>
   </header>
   
-  <!-- Modal Popup -->
+  <!-- Modal for user type selection -->
   <div id="userTypeModal" class="modal">
     <div class="modal-content">
       <h2>Are you in need of blood?</h2>
@@ -34,8 +34,15 @@
     </div>
   </div>
   
+  <!-- Expanded Card Modal (hidden by default) -->
+  <div id="expandedCardModal" class="modal" style="display: none;">
+    <div class="modal-content" id="expandedCardModalContent">
+      <button id="closeExpandedCardBtn">Close</button>
+      <div id="expandedCardDetails" style="margin-top: 15px; text-align: center;"></div>
+    </div>
+  </div>
+  
   <main>
-    <!-- Filter Section -->
     <section id="filterSection">
       <h2>Filter by District and State</h2>
       <form id="filterForm">
@@ -43,45 +50,34 @@
         <select id="stateSelect" name="stateSelect" required>
           <option value="">Select State</option>
         </select>
-        
         <label for="districtSelect">District:</label>
         <select id="districtSelect" name="districtSelect" required>
           <option value="">Select District</option>
         </select>
-        
         <button type="submit">Apply Filter</button>
       </form>
     </section>
     
-    <!-- Registered Donors Section -->
     <section id="donorsSection" style="display:none;">
       <h2>Registered Donors</h2>
-      <div id="donorList">
-        <!-- Donor cards will be loaded here -->
-      </div>
+      <div id="donorList"></div>
     </section>
     
-    <!-- Blood Requests Section -->
     <section id="requestsSection" style="display:none;">
       <h2>Blood Requests</h2>
-      <div id="requestList">
-        <!-- Blood request cards will be loaded here -->
-      </div>
+      <div id="requestList"></div>
     </section>
   </main>
   
   <script src="js/script.js"></script>
   
-  <!-- Modal and Logout Script -->
   <script>
-    // Logout functionality
     document.getElementById('logoutBtn').addEventListener('click', function(){
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
       window.location.href = "login.html";
     });
     
-    // Global variable for user type: "need" or "donate"
     window.userType = "";
     
     document.getElementById('needBloodBtn').addEventListener('click', function(){
@@ -95,6 +91,39 @@
       document.getElementById('userTypeModal').style.display = 'none';
       alert("Please select your State and District to view blood requests in your area.");
     });
+    
+    document.getElementById('closeExpandedCardBtn').addEventListener('click', function(){
+      document.getElementById('expandedCardModal').style.display = 'none';
+    });
+    
+    function updateChatBadge() {
+      fetch('/api/messages/unread', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      })
+      .then(response => response.json())
+      .then(counts => {
+        let totalUnread = 0;
+        for (let key in counts) {
+          totalUnread += counts[key];
+        }
+        const badge = document.getElementById('chatBadge');
+        if (totalUnread > 0) {
+          badge.innerText = totalUnread;
+          badge.style.backgroundColor = 'red';
+          badge.style.color = 'white';
+          badge.style.padding = '2px 6px';
+          badge.style.borderRadius = '50%';
+          badge.style.fontSize = '0.8rem';
+          badge.style.marginLeft = '5px';
+        } else {
+          badge.innerText = '';
+        }
+      })
+      .catch(error => console.error("Error fetching unread messages:", error));
+    }
+    
+    setInterval(updateChatBadge, 5000);
+    updateChatBadge();
   </script>
 </body>
 </html>

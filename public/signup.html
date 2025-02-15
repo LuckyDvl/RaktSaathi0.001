@@ -29,6 +29,12 @@
         <option value="recipient">Recipient</option>
       </select>
       
+      <label for="fullName">Full Name:</label>
+      <input type="text" id="fullName" name="fullName" required>
+      
+      <label for="bio">Bio:</label>
+      <textarea id="bio" name="bio" rows="4"></textarea>
+      
       <button type="submit">Signup</button>
     </form>
     <div id="signupMsg"></div>
@@ -39,7 +45,9 @@
         const data = {
           username: document.getElementById('username').value,
           password: document.getElementById('password').value,
-          role: document.getElementById('role').value
+          role: document.getElementById('role').value,
+          fullName: document.getElementById('fullName').value,
+          bio: document.getElementById('bio').value
         };
         fetch('/api/signup', {
           method: 'POST',

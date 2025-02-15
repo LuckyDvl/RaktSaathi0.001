@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customize Profile - Blood Donation App</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    if (!localStorage.getItem('token')) { window.location.href = "login.html"; }
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Customize Your Profile</h1>
+    <nav>
+      <a href="index.html">Home</a> |
+      <a href="chat.html">Chat</a> |
+      <button id="logoutBtn">Logout</button>
+    </nav>
+  </header>
+  <main>
+    <div id="profileContainer">
+      <h2>Your Profile</h2>
+      <form id="profileForm">
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName" required>
+        
+        <label for="bio">Bio:</label>
+        <textarea id="bio" name="bio" rows="4"></textarea>
+        
+        <button type="submit">Update Profile</button>
+      </form>
+      <div id="profileMsg"></div>
+    </div>
+    
+    <script>
+      document.getElementById('logoutBtn').addEventListener('click', function(){
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        window.location.href = "login.html";
+      });
+      
+      function loadProfile() {
+        const token = localStorage.getItem('token');
+        fetch('/api/user/profile', { headers: { 'Authorization': `Bearer ${token}` } })
+          .then(r => r.json())
+          .then(user => {
+            document.getElementById('fullName').value = user.fullName || "";
+            document.getElementById('bio').value = user.bio || "";
+          })
+          .catch(e => console.error("Error loading profile:", e));
+      }
+      
+      loadProfile();
+      
+      document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        const data = {
+          fullName: document.getElementById('fullName').value,
+          bio: document.getElementById('bio').value
+        };
+        fetch('/api/user/profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(result => {
+          document.getElementById('profileMsg').innerText = result.message;
+          loadProfile();
+        })
+        .catch(e => {
+          console.error("Error updating profile:", e);
+          document.getElementById('profileMsg').innerText = "Error updating profile.";
+        });
+      });
+    </script>
+  </main>
+</body>
+</html>

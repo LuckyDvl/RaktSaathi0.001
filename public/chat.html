@@ -6,113 +6,318 @@
   <title>Chat - Blood Donation App</title>
   <link rel="stylesheet" href="css/style.css">
   <script>
-    if (!localStorage.getItem('token')) {
-      window.location.href = "login.html";
-    }
+    if (!localStorage.getItem('token')) { window.location.href = "login.html"; }
   </script>
+  <style>
+    /* Light theme chat layout */
+    #chatContainer {
+      display: flex;
+      height: 90vh;
+      background-color: #f2f2f2;
+    }
+    #chatSidebar {
+      width: 30%;
+      border-right: 1px solid #ccc;
+      padding: 10px;
+      overflow-y: auto;
+      background-color: #fff;
+    }
+    #chatSidebar h2 {
+      margin-top: 0;
+      color: #000;
+    }
+    #chatSidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .contact-item {
+      padding: 8px;
+      margin-bottom: 5px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .contact-item:hover {
+      background-color: #eaeaea;
+    }
+    
+    #chatMain {
+      width: 70%;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      background-color: #fff;
+    }
+    #chatHeader {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+    #chatHeader h3 {
+      margin: 0;
+      color: #000;
+    }
+    #chatHeader .profile-info {
+      color: #555;
+      font-size: 0.9rem;
+    }
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: #fff;
+      color: #000;
+    }
+    .message-item {
+      margin: 5px 0;
+      word-wrap: break-word;
+    }
+    .message-username {
+      font-weight: bold;
+      margin-right: 5px;
+      color: #000;
+    }
+    .message-text {
+      color: #333;
+    }
+    .message-image {
+      max-width: 150px;
+      max-height: 150px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #messageForm {
+      display: flex;
+      margin-top: 10px;
+      gap: 5px;
+    }
+    #messageInput {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #000;
+    }
+    #imageInput {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #000;
+      padding: 5px;
+    }
+    #messageSendBtn {
+      background-color: #3897f0;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 15px;
+      cursor: pointer;
+    }
+    #messageSendBtn:hover {
+      background-color: #4ea2f5;
+    }
+    
+    /* Fullscreen image modal */
+    #imageModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    #imageModalContent {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+    }
+    #imageModalContent img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    #closeImageModalBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #fff;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>Chat</h1>
     <nav>
       <a href="index.html">Home</a> |
-      <a href="login.html">Login</a> |
-      <a href="signup.html">Signup</a>
+      <a href="profile.html">Customize Profile</a> |
+      <button id="logoutBtn">Logout</button>
     </nav>
   </header>
-  <main>
-    <div id="chatContainer">
-      <h2>Conversation</h2>
-      <div id="messages"></div>
-      <form id="messageForm">
-        <input type="text" id="messageInput" placeholder="Type your message" required>
-        <button type="submit">Send</button>
-      </form>
-      <div>
-        <label for="withUsername">Chat with (username):</label>
-        <input type="text" id="withUsername" placeholder="Enter username" required>
-        <button id="startChatBtn">Start Chat</button>
-      </div>
+  <main id="chatContainer">
+    <div id="chatSidebar">
+      <h2>Messages</h2>
+      <ul id="contactsList"></ul>
     </div>
-    
-    <script>
-      const token = localStorage.getItem('token');
-      let targetUserId = null;
-      
-      function loadMessages(withUserId) {
-        fetch(`/api/messages?withUserId=${withUserId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        })
-        .then(response => response.json())
-        .then(messages => {
-          const messagesDiv = document.getElementById('messages');
-          messagesDiv.innerHTML = "";
-          messages.forEach(msg => {
-            const p = document.createElement('p');
-            p.textContent = `${msg.senderId === parseInt(localStorage.getItem('userId')) ? "You" : "User " + msg.senderId}: ${msg.content}`;
-            messagesDiv.appendChild(p);
-          });
-        })
-        .catch(error => {
-          console.error("Error fetching messages:", error);
-        });
-      }
-      
-      document.getElementById('messageForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (!targetUserId) {
-          alert("Please start a chat first.");
-          return;
-        }
-        const content = document.getElementById('messageInput').value;
-        fetch('/api/messages', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ receiverId: targetUserId, content })
-        })
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('messageInput').value = "";
-          loadMessages(targetUserId);
-        })
-        .catch(error => {
-          console.error("Error sending message:", error);
-        });
-      });
-      
-      document.getElementById('startChatBtn').addEventListener('click', function() {
-        const withUsername = document.getElementById('withUsername').value.trim();
-        if (!withUsername) {
-          alert("Please enter a username.");
-          return;
-        }
-        fetch(`/api/user?username=${encodeURIComponent(withUsername)}`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error("User not found");
-            }
-            return response.json();
-          })
-          .then(user => {
-            targetUserId = user.id;
-            alert("Chat started with " + user.username);
-            loadMessages(targetUserId);
-          })
-          .catch(error => {
-            console.error("Error looking up user:", error);
-            alert("User not found. Please check the username.");
-          });
-      });
-      
-      setInterval(() => {
-        if (targetUserId) {
-          loadMessages(targetUserId);
-        }
-      }, 3000);
-    </script>
+    <div id="chatMain">
+      <div id="chatHeader">
+        <h3 id="chatWithName">Select a contact</h3>
+        <div id="chatWithProfile" class="profile-info"></div>
+      </div>
+      <div id="messages"></div>
+      <form id="messageForm" enctype="multipart/form-data">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <input type="file" id="imageInput" name="imageFile" accept="image/*">
+        <button type="submit" id="messageSendBtn">Send</button>
+      </form>
+    </div>
   </main>
+  
+  <!-- Fullscreen image modal -->
+  <div id="imageModal">
+    <div id="imageModalContent">
+      <button id="closeImageModalBtn">X</button>
+      <img id="fullscreenImage" src="" alt="Fullscreen Image">
+    </div>
+  </div>
+  
+  <script>
+    const token = localStorage.getItem('token');
+    const userId = parseInt(localStorage.getItem('userId'));
+    let userMap = {};  // userId -> { username, fullName, bio }
+    let currentChatUserId = null;
+    
+    document.getElementById('logoutBtn').addEventListener('click', function(){
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      window.location.href = "login.html";
+    });
+    
+    // Close fullscreen image
+    document.getElementById('closeImageModalBtn').addEventListener('click', () => {
+      document.getElementById('imageModal').style.display = 'none';
+      document.getElementById('fullscreenImage').src = "";
+    });
+    
+    // Load contacts (all users except current)
+    function loadContacts() {
+      fetch('/api/users', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(data => {
+          data.forEach(u => { userMap[u.id] = u; });
+          renderContacts(data);
+        })
+        .catch(e => console.error("Error loading contacts:", e));
+    }
+    
+    // Render contact list
+    function renderContacts(users) {
+      const list = document.getElementById('contactsList');
+      list.innerHTML = "";
+      users.forEach(u => {
+        const li = document.createElement('li');
+        li.classList.add('contact-item');
+        li.textContent = u.username;
+        li.addEventListener('click', () => {
+          currentChatUserId = u.id;
+          document.getElementById('chatWithName').innerText = u.username;
+          let profileHtml = "";
+          if (u.fullName) profileHtml += `<p><strong>Name:</strong> ${u.fullName}</p>`;
+          if (u.bio) profileHtml += `<p>${u.bio}</p>`;
+          document.getElementById('chatWithProfile').innerHTML = profileHtml;
+          loadMessages();
+        });
+        list.appendChild(li);
+      });
+    }
+    
+    // Load conversation messages
+    function loadMessages() {
+      if (!currentChatUserId) return;
+      fetch(`/api/messages?withUserId=${currentChatUserId}`, { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(msgs => {
+          const container = document.getElementById('messages');
+          container.innerHTML = "";
+          msgs.forEach(msg => {
+            const div = document.createElement('div');
+            div.classList.add('message-item');
+            const sender = userMap[msg.senderId]?.username || (msg.senderId === userId ? "You" : "Unknown");
+            if (msg.type === "image") {
+              div.innerHTML = `<span class="message-username">${sender}:</span>
+                               <img src="${msg.content}" class="message-image" alt="Chat Image">`;
+              div.querySelector('.message-image').addEventListener('click', () => {
+                document.getElementById('fullscreenImage').src = msg.content;
+                document.getElementById('imageModal').style.display = 'flex';
+              });
+            } else {
+              div.innerHTML = `<span class="message-username">${sender}:</span>
+                               <span class="message-text">${msg.content}</span>`;
+            }
+            container.appendChild(div);
+          });
+          container.scrollTop = container.scrollHeight;
+        })
+        .catch(e => console.error("Error loading messages:", e));
+    }
+    
+    // Send message or image
+    document.getElementById('messageForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!currentChatUserId) {
+        alert("Select a contact first.");
+        return;
+      }
+      const textVal = document.getElementById('messageInput').value.trim();
+      const imageFile = document.getElementById('imageInput').files[0];
+      if (!textVal && !imageFile) {
+        alert("Please type a message or choose an image.");
+        return;
+      }
+      const formData = new FormData();
+      formData.append('receiverId', currentChatUserId);
+      if (textVal) formData.append('content', textVal);
+      if (imageFile) formData.append('imageFile', imageFile);
+      
+      fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      })
+      .then(r => r.json())
+      .then(msg => {
+        document.getElementById('messageInput').value = "";
+        document.getElementById('imageInput').value = "";
+        loadMessages();
+      })
+      .catch(e => console.error("Error sending message:", e));
+    });
+    
+    // Poll messages every 3 seconds
+    setInterval(() => {
+      if (currentChatUserId) loadMessages();
+    }, 3000);
+    
+    // If chat page is opened with a withUserId query parameter, load that conversation
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+    const initialChatId = getQueryParam("withUserId");
+    if (initialChatId) { currentChatUserId = parseInt(initialChatId); }
+    
+    // Load contacts on page load
+    loadContacts();
+  </script>
 </body>
 </html>

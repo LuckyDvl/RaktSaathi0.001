@@ -1,5 +1,5 @@
 // public/js/script.js
-// This file uses plain JavaScript (no Node require).
+// Plain JavaScript (no Node require calls).
 
 // Mapping of Indian states and their districts
 const stateDistrictMapping = {
@@ -27,7 +27,6 @@ const stateDistrictMapping = {
     "Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad",
     "Solapur", "Thane", "Kalyan", "Navi Mumbai", "Amravati"
   ]
-  // Add more states as needed.
 };
 
 function initFilterUI() {
@@ -102,6 +101,123 @@ function showSlides(n, containerId) {
   });
 }
 
+// -------------- Expanded Card Modal Feature -------------- //
+/**
+ * Opens the expanded details modal and shows all information.
+ * Also includes a message box and a "Send Message" button.
+ * @param {Object} data - The donor or recipient object.
+ * @param {Boolean} isDonor - True if donor; false if recipient.
+ */
+function showExpandedDetails(data, isDonor) {
+  const modal = document.getElementById('expandedCardModal');
+  const detailsDiv = document.getElementById('expandedCardDetails');
+  
+  // Save the target user id (from the createdBy field) for sending messages later.
+  window.expandedMessageTargetUserId = data.createdBy;
+  
+  // Build HTML string with all details.
+  let html = `<h2>${isDonor ? "Donor Details" : "Recipient Details"}</h2>`;
+  html += `<p><strong>Name:</strong> ${data.name}</p>`;
+  if (data.fatherName) {
+    html += `<p><strong>Father's Name:</strong> ${data.fatherName}</p>`;
+  }
+  html += `<p><strong>Age:</strong> ${data.age}</p>`;
+  html += `<p><strong>Gender:</strong> ${data.gender}</p>`;
+  html += `<p><strong>Mobile:</strong> ${data.mobile}</p>`;
+  if (data.email) {
+    html += `<p><strong>Email:</strong> ${data.email}</p>`;
+  }
+  if (data.bloodGroup) {
+    html += `<p><strong>Blood Group:</strong> ${data.bloodGroup}</p>`;
+  }
+  if (data.address) {
+    const addr = formatAddress(data.address);
+    if (addr) {
+      html += `<p><strong>Address:</strong> ${addr}</p>`;
+    }
+  }
+  if (isDonor) {
+    html += `<p><strong>Previously Donated:</strong> ${data.previouslyDonated}</p>`;
+    html += `<p><strong>Health Issues:</strong> ${data.healthIssues || "None"}</p>`;
+    if (data.profilePic) {
+      html += `<p><img src="${data.profilePic}" alt="Profile Pic" style="max-width:200px;border-radius:5px;"></p>`;
+    }
+  } else {
+    if (data.emergency) {
+      html += `<p><strong>Emergency:</strong> ${data.emergency}</p>`;
+    }
+    if (data.reportsImages && data.reportsImages.length > 0) {
+      html += `<p><strong>Reports Images:</strong></p>`;
+      data.reportsImages.forEach(img => {
+        html += `<img src="${img}" alt="Report Image" style="max-width:200px;display:block;margin:5px auto;">`;
+      });
+    }
+    if (data.video) {
+      html += `<p><strong>Video:</strong></p>`;
+      html += `<video src="${data.video}" controls style="max-width:200px;display:block;margin:5px auto;"></video>`;
+    }
+  }
+  
+  // Add a message input box and a Send Message button.
+  if (data.createdBy) {
+    html += `
+      <div id="expandedMessageContainer" style="margin-top:15px;">
+        <textarea id="expandedMessageInput" placeholder="Type your message here" style="width:100%;"></textarea>
+        <button onclick="sendExpandedMessage()">Send Message</button>
+      </div>
+    `;
+  }
+  
+  detailsDiv.innerHTML = html;
+  modal.style.display = 'flex';
+}
+
+/**
+ * Sends the message typed in the expanded modal.
+ */
+function sendExpandedMessage() {
+  const messageContent = document.getElementById('expandedMessageInput').value.trim();
+  if (!messageContent) {
+    alert("Please enter a message before sending.");
+    return;
+  }
+  const token = localStorage.getItem('token');
+  const receiverId = window.expandedMessageTargetUserId;
+  if (!receiverId) {
+    alert("Recipient information is missing.");
+    return;
+  }
+  fetch('/api/messages', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ receiverId: receiverId, content: messageContent })
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert("Message sent successfully!");
+    document.getElementById('expandedMessageInput').value = '';
+  })
+  .catch(error => {
+    console.error("Error sending message:", error);
+    alert("Error sending message.");
+  });
+}
+// ------------------------------------------------------------ //
+
+
+// Start chat: redirect to chat.html with target user id in query param.
+function startChat(targetUserId) {
+  if (!targetUserId) {
+    alert("This user is not available for messaging.");
+    return;
+  }
+  window.location.href = "chat.html?withUserId=" + targetUserId;
+}
+
+// Load donors and render cards.
 function loadDonors(filterState, filterDistrict) {
   fetch('/api/donors')
     .then(response => response.json())
@@ -113,7 +229,6 @@ function loadDonors(filterState, filterDistrict) {
           donor.address.district === filterDistrict
         );
       }
-      
       let output = '<div class="donor-cards-container">';
       if (donors.length === 0) {
         output += '<p>No donors registered.</p>';
@@ -135,6 +250,7 @@ function loadDonors(filterState, filterDistrict) {
               <p class="donor-info"><strong>Address:</strong> ${addressStr}</p>
               <p class="donor-info"><strong>Previously Donated:</strong> ${donor.previouslyDonated}</p>
               <p class="donor-info"><strong>Health Issues:</strong> ${donor.healthIssues || "None"}</p>
+              <button onclick='showExpandedDetails(${JSON.stringify(donor)}, true)'>More Info</button>
               <button onclick="startChat(${donor.createdBy})">Message</button>
             </div>
           `;
@@ -149,6 +265,7 @@ function loadDonors(filterState, filterDistrict) {
     });
 }
 
+// Load blood requests and render cards.
 function loadBloodRequests(filterState, filterDistrict) {
   fetch('/api/requests')
     .then(response => response.json())
@@ -160,7 +277,6 @@ function loadBloodRequests(filterState, filterDistrict) {
           request.address.district === filterDistrict
         );
       }
-      
       let output = '<div class="request-cards-container">';
       if (requests.length === 0) {
         output += '<p>No blood requests available.</p>';
@@ -207,6 +323,7 @@ function loadBloodRequests(filterState, filterDistrict) {
               <p class="request-info"><strong>Address:</strong> ${addressStr}</p>
               <p class="request-info"><strong>Emergency:</strong> ${request.emergency}</p>
               ${slideshowContainer}
+              <button onclick='showExpandedDetails(${JSON.stringify(request)}, false)'>More Info</button>
               <button onclick="startChat(${request.createdBy})">Message</button>
             </div>
           `;
@@ -219,14 +336,6 @@ function loadBloodRequests(filterState, filterDistrict) {
       console.error("Error fetching blood requests:", error);
       document.getElementById('requestList').innerText = "Error loading blood requests.";
     });
-}
-
-function startChat(targetUserId) {
-  if (!targetUserId) {
-    alert("This user is not available for messaging.");
-    return;
-  }
-  window.location.href = "chat.html?withUserId=" + targetUserId;
 }
 
 initFilterUI();
