@@ -1,9 +1,10 @@
-/* public/css/style.css */
+/* Base Styles */
 body {
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease;
 }
 
 header {
@@ -11,27 +12,81 @@ header {
   color: #fff;
   padding: 1rem;
   text-align: center;
+  transition: background-color 0.3s ease;
 }
 
-nav a {
-  color: #fff;
+/* Navigation Bar – Box-like buttons with hover pop-out */
+nav a,
+nav button {
+  display: inline-block;
+  padding: 10px 15px;
+  margin: 0 5px;
   text-decoration: none;
-  margin: 0 10px;
+  color: #fff;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
 }
 
+nav a:hover,
+nav button:hover {
+  transform: scale(1.1);
+  border-color: #fff;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Logout button specific */
 nav button {
   background-color: #fff;
   color: #d32f2f;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
+}
+nav button:hover {
+  background-color: #ffe0b2;
+  color: #d32f2f;
 }
 
+/* New Button Classes for Pop-Up and Cards */
+
+/* Buttons in the pop-up modal (e.g. "In Need of Blood" and "Interested in Donating Blood") */
+.action-btn {
+  background-color: #d32f2f;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: #b71c1c;
+  transform: scale(1.05);
+}
+
+/* Buttons on the cards (More Info and Message) and in the expanded modal */
+.card-btn {
+  background-color: #3897f0;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  margin: 4px;
+}
+
+.card-btn:hover {
+  background-color: #4ea2f5;
+  transform: scale(1.05);
+}
+
+/* Main Content */
 main {
   padding: 20px;
 }
 
+/* Form Styles */
 form {
   background-color: #fff;
   padding: 15px;
@@ -39,6 +94,11 @@ form {
   max-width: 600px;
   margin: 0 auto 20px auto;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+form:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 form label {
@@ -51,6 +111,11 @@ form input, form select, form textarea {
   padding: 8px;
   margin-top: 5px;
   box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+form input:focus, form select:focus, form textarea:focus {
+  border-color: #d32f2f;
 }
 
 form button {
@@ -61,11 +126,23 @@ form button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
+form button:hover {
+  background-color: #b71c1c;
+  transform: scale(1.05);
+}
+
+/* Radio Group */
 .radio-group label {
   display: inline-block;
   margin-right: 15px;
+  transition: color 0.3s ease;
+}
+
+.radio-group label:hover {
+  color: #d32f2f;
 }
 
 /* Modal Styles */
@@ -80,9 +157,10 @@ form button {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  transition: opacity 0.3s ease;
 }
 
-/* Hide all modals by default except userTypeModal */
+/* Hide all modals by default except for userTypeModal */
 .modal:not(#userTypeModal) {
   display: none;
 }
@@ -92,14 +170,21 @@ form button {
   padding: 20px;
   border-radius: 8px;
   text-align: center;
+  transition: transform 0.3s ease;
 }
 
-/* Expanded Card Modal adjustments */
-#expandedCardModalContent {
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
+.modal-content:hover {
+  transform: scale(1.02);
 }
+
+/* Force the expanded pop-up (More Info) to be smaller */
+#expandedCardModal .modal-content {
+  width: 90% !important;
+  max-width: 350px !important;  /* Reduced from 600px or 400px to 350px */
+  padding: 10px !important;     /* Adjust padding as needed */
+  margin: 20px auto !important;
+}
+
 
 /* Filter Section */
 #filterSection {
@@ -109,6 +194,11 @@ form button {
   max-width: 600px;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+#filterSection:hover {
+  transform: translateY(-3px);
 }
 
 #filterSection form {
@@ -127,7 +217,7 @@ form button {
   flex: 2;
 }
 
-/* Donor Cards Container */
+/* Donor Cards */
 .donor-cards-container {
   display: flex;
   flex-wrap: wrap;
@@ -135,7 +225,6 @@ form button {
   justify-content: center;
 }
 
-/* Donor Card */
 .donor-card {
   background-color: #fff;
   width: 280px;
@@ -143,13 +232,19 @@ form button {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   padding: 20px;
   text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.donor-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
 .donor-pic-wrapper {
   margin-bottom: 10px;
 }
 
-/* Profile Picture as Circle */
 .profile-pic-circle {
   width: 100px;
   height: 100px;
@@ -157,6 +252,11 @@ form button {
   border-radius: 50%;
   display: block;
   margin: 0 auto;
+  transition: transform 0.3s ease;
+}
+
+.profile-pic-circle:hover {
+  transform: scale(1.1);
 }
 
 .donor-name {
@@ -175,7 +275,7 @@ form button {
   margin: 3px 0;
 }
 
-/* Request Cards Container */
+/* Request Cards */
 .request-cards-container {
   display: flex;
   flex-wrap: wrap;
@@ -183,7 +283,6 @@ form button {
   justify-content: center;
 }
 
-/* Request Card */
 .request-card {
   background-color: #fff;
   width: 280px;
@@ -191,6 +290,13 @@ form button {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   padding: 20px;
   text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.request-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
 .request-name {
@@ -211,7 +317,6 @@ form button {
   margin: 10px auto 0;
 }
 
-/* Each slide (image or video) */
 .mySlide {
   display: none;
   text-align: center;
@@ -226,7 +331,7 @@ form button {
   margin: 0 auto;
 }
 
-/* Prev & Next buttons */
+/* Prev & Next Buttons */
 .prev, .next {
   position: absolute;
   top: 50%;
@@ -239,6 +344,11 @@ form button {
   border-radius: 3px;
   cursor: pointer;
   user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
 }
 
 .prev {
@@ -249,41 +359,46 @@ form button {
   right: 5px;
 }
 
-.prev:hover, .next:hover {
-  background-color: rgba(0,0,0,0.8);
-}
-
 /* Chat Page Styling */
 #chatContainer {
   display: flex;
   height: 90vh;
   background-color: #f2f2f2;
 }
+
 #chatSidebar {
   width: 30%;
   border-right: 1px solid #ccc;
   padding: 10px;
   overflow-y: auto;
   background-color: #fff;
+  transition: background-color 0.3s ease;
 }
+
 #chatSidebar h2 {
   margin-top: 0;
   color: #000;
 }
+
 #chatSidebar ul {
   list-style: none;
   padding: 0;
 }
+
 .contact-item {
   padding: 8px;
   margin-bottom: 5px;
   background-color: #f9f9f9;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
+
 .contact-item:hover {
   background-color: #eaeaea;
+  transform: translateX(3px);
 }
+
 #chatMain {
   width: 70%;
   display: flex;
@@ -291,19 +406,23 @@ form button {
   padding: 10px;
   background-color: #fff;
 }
+
 #chatHeader {
   border-bottom: 1px solid #ccc;
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
+
 #chatHeader h3 {
   margin: 0;
   color: #000;
 }
+
 #chatHeader .profile-info {
   color: #555;
   font-size: 0.9rem;
 }
+
 #messages {
   flex: 1;
   overflow-y: auto;
@@ -311,30 +430,42 @@ form button {
   padding: 10px;
   background-color: #fff;
   color: #000;
+  transition: background-color 0.3s ease;
 }
+
 .message-item {
   margin: 5px 0;
   word-wrap: break-word;
 }
+
 .message-username {
   font-weight: bold;
   margin-right: 5px;
   color: #000;
 }
+
 .message-text {
   color: #333;
 }
+
 .message-image {
   max-width: 150px;
   max-height: 150px;
   cursor: pointer;
   border-radius: 5px;
+  transition: transform 0.3s ease;
 }
+
+.message-image:hover {
+  transform: scale(1.05);
+}
+
 #messageForm {
   display: flex;
   margin-top: 10px;
   gap: 5px;
 }
+
 #messageInput {
   flex: 1;
   padding: 8px;
@@ -342,14 +473,26 @@ form button {
   border-radius: 4px;
   background-color: #fff;
   color: #000;
+  transition: border-color 0.3s ease;
 }
+
+#messageInput:focus {
+  border-color: #d32f2f;
+}
+
 #imageInput {
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
   color: #000;
   padding: 5px;
+  transition: border-color 0.3s ease;
 }
+
+#imageInput:focus {
+  border-color: #d32f2f;
+}
+
 #messageSendBtn {
   background-color: #3897f0;
   color: #fff;
@@ -357,33 +500,41 @@ form button {
   border-radius: 4px;
   padding: 8px 15px;
   cursor: pointer;
-}
-#messageSendBtn:hover {
-  background-color: #4ea2f5;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-/* Fullscreen image modal */
+#messageSendBtn:hover {
+  background-color: #4ea2f5;
+  transform: scale(1.05);
+}
+
+/* Fullscreen Image Modal */
 #imageModal {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0,0,0,0.8);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 2000;
 }
+
 #imageModalContent {
   position: relative;
   max-width: 90%;
   max-height: 90%;
 }
+
 #imageModalContent img {
   width: auto;
   height: auto;
   max-width: 100%;
   max-height: 100%;
 }
+
 #closeImageModalBtn {
   position: absolute;
   top: 10px;
@@ -395,10 +546,85 @@ form button {
   padding: 5px 10px;
   cursor: pointer;
   font-weight: bold;
+  transition: transform 0.3s ease;
 }
 
-/* General reset for lists */
-ul {
-  list-style: none;
-  padding: 0;
+#closeImageModalBtn:hover {
+  transform: scale(1.1);
+}
+
+/* Admin Panel Styling */
+#adminContainer {
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+#adminContainer:hover {
+  transform: translateY(-3px);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+  transition: background-color 0.3s ease;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+button.deleteBtn {
+  background-color: #d32f2f;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button.deleteBtn:hover {
+  background-color: #b71c1c;
+  transform: scale(1.05);
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  #chatContainer {
+    flex-direction: column;
+    height: auto;
+  }
+  #chatSidebar, #chatMain {
+    width: 100%;
+  }
+  #chatSidebar {
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+  }
+}
+
+@media (max-width: 480px) {
+  nav a, nav button {
+    display: block;
+    margin: 5px 0;
+    text-align: center;
+  }
+  form {
+    width: 90%;
+  }
+  #adminContainer {
+    width: 95%;
+  }
 }

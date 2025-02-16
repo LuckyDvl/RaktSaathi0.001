@@ -6,10 +6,7 @@
   <title>Admin Panel - Blood Donation App</title>
   <link rel="stylesheet" href="css/style.css">
   <script>
-    // Only allow access if logged in
-    if (!localStorage.getItem('token')) {
-      window.location.href = "login.html";
-    }
+    if (!localStorage.getItem('token')) { window.location.href = "login.html"; }
   </script>
   <style>
     /* Simple admin panel styles */
@@ -113,9 +110,7 @@
       function loadActiveSessions() {
         fetch('/api/admin/stats', { headers: { 'Authorization': `Bearer ${token}` } })
           .then(r => r.json())
-          .then(data => {
-            document.getElementById('activeSessions').innerText = data.activeSessions;
-          })
+          .then(data => { document.getElementById('activeSessions').innerText = data.activeSessions; })
           .catch(e => console.error("Error loading active sessions:", e));
       }
       
@@ -148,10 +143,7 @@
             headers: { 'Authorization': `Bearer ${token}` }
           })
           .then(r => r.json())
-          .then(data => {
-            alert(data.message);
-            loadUsers();
-          })
+          .then(data => { alert(data.message); loadUsers(); })
           .catch(e => console.error("Error deleting user:", e));
         }
       }
@@ -184,10 +176,7 @@
             headers: { 'Authorization': `Bearer ${token}` }
           })
           .then(r => r.json())
-          .then(data => {
-            alert(data.message);
-            loadDonorsAdmin();
-          })
+          .then(data => { alert(data.message); loadDonorsAdmin(); })
           .catch(e => console.error("Error deleting donor:", e));
         }
       }
@@ -220,10 +209,7 @@
             headers: { 'Authorization': `Bearer ${token}` }
           })
           .then(r => r.json())
-          .then(data => {
-            alert(data.message);
-            loadRequestsAdmin();
-          })
+          .then(data => { alert(data.message); loadRequestsAdmin(); })
           .catch(e => console.error("Error deleting request:", e));
         }
       }

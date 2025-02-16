@@ -81,7 +81,7 @@ app.post('/api/signup', (req, res) => {
   res.status(201).json({ message: "Signup successful", user: newUser });
 });
 
-// Login – auto-redirect to admin panel if role === 'admin'
+// Login – if role is admin, the client can auto‑redirect to admin.html
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password)
@@ -111,7 +111,7 @@ function authenticate(req, res, next) {
   next();
 }
 
-// Middleware: check admin
+// Middleware: check admin privileges
 function checkAdmin(req, res, next) {
   const user = users.find(u => u.id === req.userId);
   if (!user || user.role !== 'admin') {
@@ -147,7 +147,7 @@ app.put('/api/user/profile', authenticate, (req, res) => {
   res.json({ message: "Profile updated successfully", user });
 });
 
-// Get all users except current (for chat sidebar)
+// Get all users except current (for chat contacts)
 app.get('/api/users', authenticate, (req, res) => {
   const otherUsers = users.filter(u => u.id !== req.userId);
   res.json(otherUsers);
@@ -219,7 +219,7 @@ app.post('/api/requests', upload.fields([
 });
 
 // ---------- MESSAGES ----------
-// Support text and image messages
+// Support both text and image messages
 const msgUpload = upload.single('imageFile');
 app.post('/api/messages', authenticate, (req, res) => {
   msgUpload(req, res, function(err) {
@@ -250,8 +250,7 @@ app.post('/api/messages', authenticate, (req, res) => {
 
 app.get('/api/messages', authenticate, (req, res) => {
   const { withUserId } = req.query;
-  if (!withUserId)
-    return res.status(400).json({ error: 'Missing withUserId parameter' });
+  if (!withUserId) return res.status(400).json({ error: 'Missing withUserId parameter' });
   const conv = messages.filter(m =>
     (m.senderId === req.userId && m.receiverId === parseInt(withUserId)) ||
     (m.senderId === parseInt(withUserId) && m.receiverId === req.userId)
@@ -260,7 +259,7 @@ app.get('/api/messages', authenticate, (req, res) => {
   res.json(conv);
 });
 
-// New endpoint: Get unread message counts by sender
+// New endpoint: Get unread message counts grouped by sender
 app.get('/api/messages/unread', authenticate, (req, res) => {
   const unreadCounts = {};
   messages.forEach(m => {
@@ -282,7 +281,7 @@ app.get('/api/admin/stats', authenticate, checkAdmin, (req, res) => {
   res.json({ activeSessions: Object.keys(sessions).length });
 });
 
-// Delete a user (cannot delete self)
+// Delete a user account (admin cannot delete self)
 app.delete('/api/admin/users/:id', authenticate, checkAdmin, (req, res) => {
   const userIdToDelete = parseInt(req.params.id);
   if (userIdToDelete === req.userId) {
