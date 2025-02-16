@@ -8,11 +8,11 @@ const port = process.env.PORT || 3000;
 // In-memory arrays
 let donors = [];
 let requests = [];
-let users = []; // Each user: { id, username, password, role, fullName, bio }
-let messages = []; // Each message: { id, senderId, receiverId, type: 'text'|'image', content, timestamp, read }
+let users = []; // { id, username, password, role, fullName, bio }
+let messages = []; // { id, senderId, receiverId, type: 'text'|'image', content, timestamp, read }
 let sessions = {}; // sessions[token] = { userId, expiresAt }
 
-// Pre-populate default users with profile info
+// Pre-populate default users (including an admin)
 users.push({
   id: 1,
   username: "errorTeam",
@@ -28,6 +28,14 @@ users.push({
   role: "donor",
   fullName: "Error Team Two",
   bio: "Second default account."
+});
+users.push({
+  id: 3,
+  username: "admin",
+  password: "admin",
+  role: "admin",
+  fullName: "Administrator",
+  bio: "Admin account."
 });
 
 // Token lifetime (30 minutes)
@@ -51,7 +59,7 @@ app.use(express.json());
   IMPORTANT: Define all API endpoints before serving static files.
 */
 
-// ----- AUTH & PROFILE ENDPOINTS -----
+// ---------- AUTH & PROFILE ----------
 // Sign up – creates account with profile info
 app.post('/api/signup', (req, res) => {
   const { username, password, role, fullName, bio } = req.body;
@@ -73,7 +81,7 @@ app.post('/api/signup', (req, res) => {
   res.status(201).json({ message: "Signup successful", user: newUser });
 });
 
-// Login
+// Login – auto-redirect to admin panel if role === 'admin'
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password)
@@ -103,6 +111,15 @@ function authenticate(req, res, next) {
   next();
 }
 
+// Middleware: check admin
+function checkAdmin(req, res, next) {
+  const user = users.find(u => u.id === req.userId);
+  if (!user || user.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin privileges required' });
+  }
+  next();
+}
+
 // Refresh token
 app.post('/api/refresh', authenticate, (req, res) => {
   const oldToken = req.headers.authorization.split(' ')[1];
@@ -113,20 +130,18 @@ app.post('/api/refresh', authenticate, (req, res) => {
   res.json({ message: "Token refreshed", token: newToken });
 });
 
-// Get current user's profile
+// Get current user profile
 app.get('/api/user/profile', authenticate, (req, res) => {
   const user = users.find(u => u.id === req.userId);
-  if (!user)
-    return res.status(404).json({ error: 'User not found' });
+  if (!user) return res.status(404).json({ error: 'User not found' });
   res.json(user);
 });
 
-// Update current user's profile
+// Update current user profile
 app.put('/api/user/profile', authenticate, (req, res) => {
   const { fullName, bio } = req.body;
   const user = users.find(u => u.id === req.userId);
-  if (!user)
-    return res.status(404).json({ error: 'User not found' });
+  if (!user) return res.status(404).json({ error: 'User not found' });
   user.fullName = fullName || "";
   user.bio = bio || "";
   res.json({ message: "Profile updated successfully", user });
@@ -144,12 +159,12 @@ app.get('/api/user', (req, res) => {
   if (!username)
     return res.status(400).json({ error: 'Missing username parameter' });
   const found = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-  if (!found)
-    return res.status(404).json({ error: 'User not found' });
+  if (!found) return res.status(404).json({ error: 'User not found' });
   res.json(found);
 });
 
-// ----- DONORS & REQUESTS -----
+// ---------- DONORS & REQUESTS ----------
+// Donors endpoints
 app.get('/api/donors', (req, res) => res.json(donors));
 app.post('/api/donors', upload.single('profilePic'), (req, res) => {
   const { name, fatherName, age, gender, mobile, email, bloodGroup, street, district, state, pinCode, altMobile, previouslyDonated, healthIssues, userId } = req.body;
@@ -171,6 +186,7 @@ app.post('/api/donors', upload.single('profilePic'), (req, res) => {
   res.status(201).json(newDonor);
 });
 
+// Blood requests endpoints
 app.get('/api/requests', (req, res) => res.json(requests));
 app.post('/api/requests', upload.fields([
   { name: 'reportsImages', maxCount: 5 },
@@ -202,7 +218,8 @@ app.post('/api/requests', upload.fields([
   res.status(201).json(newRequest);
 });
 
-// ----- MESSAGES -----
+// ---------- MESSAGES ----------
+// Support text and image messages
 const msgUpload = upload.single('imageFile');
 app.post('/api/messages', authenticate, (req, res) => {
   msgUpload(req, res, function(err) {
@@ -239,12 +256,11 @@ app.get('/api/messages', authenticate, (req, res) => {
     (m.senderId === req.userId && m.receiverId === parseInt(withUserId)) ||
     (m.senderId === parseInt(withUserId) && m.receiverId === req.userId)
   );
-  // Mark messages sent to current user as read
   conv.forEach(m => { if (m.receiverId === req.userId) m.read = true; });
   res.json(conv);
 });
 
-// New endpoint: Get unread message counts grouped by sender
+// New endpoint: Get unread message counts by sender
 app.get('/api/messages/unread', authenticate, (req, res) => {
   const unreadCounts = {};
   messages.forEach(m => {
@@ -255,6 +271,49 @@ app.get('/api/messages/unread', authenticate, (req, res) => {
   res.json(unreadCounts);
 });
 
+// ---------- ADMIN PANEL ENDPOINTS ----------
+// Get all user accounts
+app.get('/api/admin/users', authenticate, checkAdmin, (req, res) => {
+  res.json(users);
+});
+
+// Get active sessions count
+app.get('/api/admin/stats', authenticate, checkAdmin, (req, res) => {
+  res.json({ activeSessions: Object.keys(sessions).length });
+});
+
+// Delete a user (cannot delete self)
+app.delete('/api/admin/users/:id', authenticate, checkAdmin, (req, res) => {
+  const userIdToDelete = parseInt(req.params.id);
+  if (userIdToDelete === req.userId) {
+    return res.status(400).json({ error: "Admin cannot delete their own account." });
+  }
+  const initialLength = users.length;
+  users = users.filter(u => u.id !== userIdToDelete);
+  for (const token in sessions) {
+    if (sessions[token].userId === userIdToDelete) {
+      delete sessions[token];
+    }
+  }
+  res.json({ message: "User deleted", deleted: initialLength !== users.length });
+});
+
+// Delete a donor registration
+app.delete('/api/admin/donors/:id', authenticate, checkAdmin, (req, res) => {
+  const donorId = parseInt(req.params.id);
+  const initialLength = donors.length;
+  donors = donors.filter(d => d.id !== donorId);
+  res.json({ message: "Donor registration deleted", deleted: initialLength !== donors.length });
+});
+
+// Delete a blood request
+app.delete('/api/admin/requests/:id', authenticate, checkAdmin, (req, res) => {
+  const requestId = parseInt(req.params.id);
+  const initialLength = requests.length;
+  requests = requests.filter(r => r.id !== requestId);
+  res.json({ message: "Blood request deleted", deleted: initialLength !== requests.length });
+});
+
 // Cleanup expired tokens every minute
 setInterval(() => {
   const now = Date.now();
@@ -263,7 +322,7 @@ setInterval(() => {
   }
 }, 60 * 1000);
 
-// Serve static files and uploads
+// ---------- STATIC FILES ----------
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
