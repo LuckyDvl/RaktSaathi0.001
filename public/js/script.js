@@ -59,7 +59,42 @@ function initFilterUI() {
     applyFilter(selectedState, selectedDistrict);
   });
 }
+// Donor form
+document.getElementById('donorForm')?.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const selectedBloodGroup = document.querySelector('input[name="bloodGroup"]:checked');
+  if (!selectedBloodGroup) {
+    alert("Please select a blood group.");
+    return;
+  }
+  console.log("Donor: selected blood group =", selectedBloodGroup.value);
+});
 
+// Request form
+document.getElementById('requestForm')?.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const selectedBloodGroup = document.querySelector('input[name="bloodGroup"]:checked');
+  if (!selectedBloodGroup) {
+    alert("Please select a blood group.");
+    return;
+  }
+  console.log("Request: selected blood group =", selectedBloodGroup.value);
+});
+// Toggle side menu
+function toggleSideMenu() {
+  const sideMenu = document.getElementById('sideMenu');
+  sideMenu.classList.toggle('open');
+}
+
+// Logout function
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('userId');
+  window.location.href = "login.html";
+}
+
+// userType is set in index.html (Need or Donate) for filtering donors or requests
+window.userType = "";
 // Decide whether to load donors or requests based on userType
 function applyFilter(filterState, filterDistrict) {
   if (window.userType === "need") {

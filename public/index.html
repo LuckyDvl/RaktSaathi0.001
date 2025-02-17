@@ -6,61 +6,52 @@
   <title>RaktSaathi - Home</title>
   <link rel="stylesheet" href="css/style.css" />
   <script>
-    // Redirect to login if not logged in
-    if (!localStorage.getItem('token')) {
-      window.location.href = "login.html";
-    }
+    // if (!localStorage.getItem('token')) {
+    //   window.location.href = "login.html";
+    // }
   </script>
 </head>
 <body>
-  <!-- Side Menu (hidden by default) -->
+  <!-- Side Menu -->
   <div id="sideMenu" class="side-menu">
     <button id="closeMenuBtn" onclick="toggleSideMenu()">×</button>
     <ul>
       <li><a href="profile.html">My Profile</a></li>
-      <li><a href="mydonations.html">My donations</a></li>
+      <li><a href="mydonations.html">My Donations</a></li>
       <li><a href="emergency.html">Emergency Alerts</a></li>
       <li><a href="faqs.html">FAQS</a></li>
-      <li><a href="#" onclick="logout()">Log out</a></li>
-      <li><a href="share.html">Share our service</a></li>
-      <li><a href="map.html">Map (heat map)</a></li>
+      <li><a href="#" onclick="logout()">Log Out</a></li>
+      <li><a href="#">Share Our Service</a></li>
+      <li><a href="#">Map (Heat Map)</a></li>
     </ul>
   </div>
-  
+
   <header>
     <div class="header-top">
-      <!-- Hamburger icon -->
       <div class="hamburger" onclick="toggleSideMenu()">
         <div class="line"></div>
         <div class="line"></div>
         <div class="line"></div>
       </div>
-      <!-- Logo + Heading side by side -->
       <div class="header-title">
         <img src="images/blood-drop.png" alt="Blood Drop" class="blood-drop-icon">
-        <h1 class="app-heading">
-          <span class="rs-big">R</span>akt<span class="rs-big">S</span>aathi
-        </h1>
+        <h1 class="app-heading"><span class="rs-big">R</span>akt<span class="rs-big">S</span>aathi</h1>
       </div>
     </div>
-    <p class="jingle">जब जरुरत रक्त की, मै साथी आपका</p>
-    <!-- Main nav (without the Logout button) -->
+    <p class="jingle">जब ज़रूरत रक्त की, मैं साथी आपका।</p>
     <nav>
-      <a href="index.html">Home</a> | 
-      <a href="donor.html">Register as Donor</a> | 
-      <a href="request.html">Request Blood</a> | 
-      <a href="chat.html">Chat <span id="chatBadge"></span></a> |
+      <a href="donor.html">Register as Donor</a> |
+      <a href="request.html">Request Blood</a> |
+      <a href="chat.html">Chat</a> |
       <a href="profile.html">Customize Profile</a>
     </nav>
   </header>
-  
-  <!-- User Type Selection -->
+
   <div id="userTypeSelection" style="text-align: center; margin: 20px 0;">
     <button id="needBloodBtn" class="action-btn">I am in need of blood</button>
     <button id="donateBloodBtn" class="action-btn">I am interested in donating blood</button>
   </div>
-  
-  <!-- Filter Section (hidden by default) -->
+
   <section id="filterSection" style="display: none;">
     <h2>Filter by District and State</h2>
     <form id="filterForm">
@@ -75,60 +66,110 @@
       <button type="submit">Apply Filter</button>
     </form>
   </section>
-  
-  <!-- Donors Section -->
+
   <section id="donorsSection" style="display: none;">
     <h2>Registered Donors</h2>
     <div id="donorList"></div>
   </section>
-  
-  <!-- Blood Requests Section -->
+
   <section id="requestsSection" style="display: none;">
     <h2>Blood Requests</h2>
     <div id="requestList"></div>
   </section>
-  
-  <!-- Expanded Card Modal (More Info) -->
+
+  <!-- Expanded Card Modal -->
   <div id="expandedCardModal" class="modal">
     <div class="modal-content" id="expandedCardModalContent">
       <button id="closeExpandedCardBtn">Close</button>
       <div id="expandedCardDetails" style="margin-top: 15px; text-align: center;"></div>
     </div>
   </div>
-  
-  <!-- Main script references -->
+ <!-- Advantages of Blood Donation Section -->
+ <section id="advantagesSection" style="max-width:800px; margin:40px auto; padding:20px; text-align:left;">
+  <h2>Advantages of Blood Donation</h2>
+  <ul style="list-style: disc; margin-left: 30px;">
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      1. Helps maintain healthy iron levels in the body.
+    </li>
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      2. Stimulates new blood cell production.
+    </li>
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      3. Can reduce the risk of heart disease.
+    </li>
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      4. Helps save lives in emergencies.
+    </li>
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      5. Free mini health check-up (hemoglobin, blood pressure, etc.).
+    </li>
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      6. Burns calories and may help in weight control.
+    </li>
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      7. Lowers the risk of certain cancers.
+    </li>
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      8. Promotes a sense of well-being and altruism.
+    </li>
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      9. Helps keep the blood supply stable for your community.
+    </li>
+    <li style="margin:8px 0; transition:0.2s;"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.backgroundColor='#f9f9f9';"
+        onmouseout="this.style.transform=''; this.style.backgroundColor='';">
+      10. Encourages healthy lifestyle habits overall.
+    </li>
+  </ul>
+</section>
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div class="footer-content">
+      <p>© Team Error</p>
+      <p><a href="aboutus.html">About Us</a> | Contact Us | <a href="https://github.com/LuckyDvl" target="_blank">GitHub/LuckyDvl</a></p>
+      <p>Team Members: Suhani Pal, Yash Kumar Verma, Ekansh Vaish, Lucky Gupta</p>
+    </div>
+  </footer>
+
   <script src="js/script.js"></script>
   <script>
-    // Remove 'logoutBtn' from the main nav; place logout in side menu
-    // So we no longer have a 'logoutBtn' in nav.
-    
-    // Toggle the side menu open/close
-    function toggleSideMenu() {
-      const sideMenu = document.getElementById('sideMenu');
-      sideMenu.classList.toggle('open');
-    }
-    
-    // Logout function
     function logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
       window.location.href = "login.html";
     }
-    
-    // If user selects "need" or "donate," hide userTypeSelection and show filterSection
+    function toggleSideMenu() {
+      const sideMenu = document.getElementById('sideMenu');
+      sideMenu.classList.toggle('open');
+    }
     document.getElementById('needBloodBtn').addEventListener('click', function(){
       window.userType = "need";
       document.getElementById('userTypeSelection').style.display = 'none';
       document.getElementById('filterSection').style.display = 'block';
     });
-    
     document.getElementById('donateBloodBtn').addEventListener('click', function(){
       window.userType = "donate";
       document.getElementById('userTypeSelection').style.display = 'none';
       document.getElementById('filterSection').style.display = 'block';
     });
-    
-    // Close More Info modal
     document.getElementById('closeExpandedCardBtn').addEventListener('click', function(){
       document.getElementById('expandedCardModal').style.display = 'none';
     });

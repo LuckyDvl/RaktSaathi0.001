@@ -45,9 +45,17 @@
       <input type="email" id="email" name="email">
       
       <!-- Blood Information -->
-      <label for="bloodGroup">Blood Group:</label>
-      <input type="text" id="bloodGroup" name="bloodGroup" required>
-      
+      <label>Blood Group:</label>
+      <div class="radio-group">
+        <label><input type="radio" name="bloodGroup" value="A+" required> A+</label>
+        <label><input type="radio" name="bloodGroup" value="A-"> A-</label>
+        <label><input type="radio" name="bloodGroup" value="B+"> B+</label>
+        <label><input type="radio" name="bloodGroup" value="B-"> B-</label>
+        <label><input type="radio" name="bloodGroup" value="O+"> O+</label>
+        <label><input type="radio" name="bloodGroup" value="O-"> O-</label>
+        <label><input type="radio" name="bloodGroup" value="AB+"> AB+</label>
+        <label><input type="radio" name="bloodGroup" value="AB-"> AB-</label>
+      </div>
       <!-- Address Details -->
       <fieldset>
         <legend>Full Address</legend>
@@ -98,6 +106,16 @@
     </form>
     <div id="donorMsg"></div>
     
+    <!-- Footer -->
+  <footer class="page-footer">
+    <div class="footer-content">
+      <p>© Team Error</p>
+      <p><a href="aboutus.html">About Us</a> | Contact Us | <a href="https://github.com/LuckyDvl" target="_blank">GitHub/LuckyDvl</a></p>
+      <p>Team Members: Suhani Pal, Yash Kumar Verma, Ekansh Vaish, Lucky Gupta</p>
+    </div>
+  </footer>
+
+
     <script>
       document.getElementById('logoutBtn').addEventListener('click', function(){
         localStorage.removeItem('token');

@@ -3,63 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login - Blood Donation App</title>
+  <title>Login - RaktSaathi</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header>
-    <h1>Login</h1>
-    <nav>
-      <a href="index.html">Home</a> |
-      <a href="signup.html">Signup</a>
-    </nav>
+    <div class="header-title">
+      <img src="images/blood-drop.png" alt="Blood Drop" class="blood-drop-icon">
+      <h1 class="app-heading"><span class="rs-big">R</span>akt<span class="rs-big">S</span>aathi</h1>
+    </div>
   </header>
-  <main>
+
+  <section class="form-container">
+    <h2>Login</h2>
     <form id="loginForm">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required>
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
+      <label>Username:</label>
+      <input type="text" id="username" required>
+
+      <label>Password:</label>
+      <input type="password" id="password" required>
+
       <button type="submit">Login</button>
     </form>
-    <div id="loginMsg"></div>
-    
-    <script>
-      document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const data = {
-          username: document.getElementById('username').value,
-          password: document.getElementById('password').value
-        };
-        fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        })
-        .then(response => {
-          if (!response.ok) throw new Error('Network response was not ok');
-          return response.json();
-        })
-        .then(data => {
-          if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('userId', data.user.id);
-            document.getElementById('loginMsg').innerText = "Login successful!";
-            if (data.user.role === "admin") {
-              window.location.href = "admin.html";
-            } else {
-              window.location.href = "index.html";
-            }
-          } else {
-            document.getElementById('loginMsg').innerText = data.error || "Login failed.";
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          document.getElementById('loginMsg').innerText = "Error logging in.";
-        });
-      });
-    </script>
-  </main>
+    <p>Don't have an account? <a href="#">Sign up here</a></p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div class="footer-content">
+      <p>© Team Error</p>
+      <p><a href="aboutus.html">About Us</a> | Contact Us | <a href="https://github.com/LuckyDvl" target="_blank">GitHub/LuckyDvl</a></p>
+      <p>Team Members: Suhani Pal, Yash Kumar Verma, Ekansh Vaish, Lucky Gupta</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      localStorage.setItem('token', 'dummyToken');
+      localStorage.setItem('userId', '123');
+      window.location.href = "index.html";
+    });
+  </script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 /* public/css/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Bhai+2&display=swap');
 
 /* Base Styles */
 body {
@@ -7,6 +8,10 @@ body {
   margin: 0;
   padding: 0;
   transition: background-color 0.3s ease;
+}
+
+body {
+  font-family: 'Baloo Bhai 2', cursive;
 }
 
 header {
@@ -168,6 +173,7 @@ nav button:hover {
 
 
 /* New Button Classes for Pop-Up and Cards (red buttons) */
+/* Action buttons (Need / Donate) */
 .action-btn {
   background-color: #d32f2f;
   color: #fff;
@@ -231,13 +237,84 @@ form button:hover {
 }
 
 /* Radio Group */
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
 .radio-group label {
-  display: inline-block;
-  margin-right: 15px;
-  transition: color 0.3s ease;
+  background-color: #fff;
+  padding: 8px 12px;
+  border: 2px solid #d32f2f;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 .radio-group label:hover {
-  color: #d32f2f;
+  background-color: #d32f2f;
+  color: #fff;
+}
+.radio-group input[type="radio"] {
+  display: none;
+}
+.radio-group input[type="radio"]:checked + label {
+  background-color: #d32f2f;
+  color: #fff;
+}
+/* form container base */
+.form-container {
+  max-width: 600px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.form-container h2 {
+  margin-top: 0;
+}
+.form-container label {
+  display: block;
+  margin-top: 10px;
+}
+.form-container input,
+.form-container textarea,
+.form-container select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;/* Action buttons (Need / Donate) */
+.action-btn {
+  background-color: #d32f2f;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.action-btn:hover {
+  background-color: #b71c1c;
+  transform: scale(1.05);
+}
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.form-container button {
+  margin-top: 15px;
+  padding: 10px 15px;
+  background-color: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.form-container button:hover {
+  background-color: #b71c1c;
+  transform: scale(1.05);
 }
 
 /* Modal Styles */
@@ -637,6 +714,22 @@ button.deleteBtn:hover {
   background-color: #b71c1c;
   transform: scale(1.05);
 }
+/* Footer */
+.page-footer {
+  background-color: #222222;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+.footer-content p,
+.footer-content a {
+  color: #fff;
+  margin: 4px 0;
+  text-decoration: none;
+}
+.footer-content a:hover {
+  text-decoration: underline;
+}
 
 /* Responsive Media Queries */
 @media (max-width: 768px) {
@@ -664,5 +757,18 @@ button.deleteBtn:hover {
   }
   #adminContainer {
     width: 95%;
+  }
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .header-top {
+    flex-direction: column;
+    justify-content: flex-start;
+    position: static;
+  }
+  .hamburger {
+    position: relative;
+    margin-bottom: 10px;
+    left: auto;
   }
 }
