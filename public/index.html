@@ -3,127 +3,135 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blood Donation App - Home</title>
+  <title>RaktSaathi - Home</title>
   <link rel="stylesheet" href="css/style.css" />
   <script>
+    // Redirect to login if not logged in
     if (!localStorage.getItem('token')) {
       window.location.href = "login.html";
     }
   </script>
 </head>
 <body>
+  <!-- Side Menu (hidden by default) -->
+  <div id="sideMenu" class="side-menu">
+    <button id="closeMenuBtn" onclick="toggleSideMenu()">×</button>
+    <ul>
+      <li><a href="profile.html">My Profile</a></li>
+      <li><a href="mydonations.html">My donations</a></li>
+      <li><a href="emergency.html">Emergency Alerts</a></li>
+      <li><a href="faqs.html">FAQS</a></li>
+      <li><a href="#" onclick="logout()">Log out</a></li>
+      <li><a href="share.html">Share our service</a></li>
+      <li><a href="map.html">Map (heat map)</a></li>
+    </ul>
+  </div>
+  
   <header>
-    <h1>Blood Donation App</h1>
+    <div class="header-top">
+      <!-- Hamburger icon -->
+      <div class="hamburger" onclick="toggleSideMenu()">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+      <!-- Logo + Heading side by side -->
+      <div class="header-title">
+        <img src="images/blood-drop.png" alt="Blood Drop" class="blood-drop-icon">
+        <h1 class="app-heading">
+          <span class="rs-big">R</span>akt<span class="rs-big">S</span>aathi
+        </h1>
+      </div>
+    </div>
+    <p class="jingle">जब जरुरत रक्त की, मै साथी आपका</p>
+    <!-- Main nav (without the Logout button) -->
     <nav>
       <a href="index.html">Home</a> | 
       <a href="donor.html">Register as Donor</a> | 
       <a href="request.html">Request Blood</a> | 
       <a href="chat.html">Chat <span id="chatBadge"></span></a> |
-      <a href="profile.html">Customize Profile</a> |
-      <button id="logoutBtn">Logout</button>
+      <a href="profile.html">Customize Profile</a>
     </nav>
   </header>
   
-  <!-- Modal for user type selection -->
-  <div id="userTypeModal" class="modal">
-    <div class="modal-content">
-      <h2>Are you in need of blood?</h2>
-      <p>Or are you interested in donating blood?</p>
-      <button id="needBloodBtn">In Need of Blood</button>
-      <button id="donateBloodBtn">Interested in Donating Blood</button>
-    </div>
+  <!-- User Type Selection -->
+  <div id="userTypeSelection" style="text-align: center; margin: 20px 0;">
+    <button id="needBloodBtn" class="action-btn">I am in need of blood</button>
+    <button id="donateBloodBtn" class="action-btn">I am interested in donating blood</button>
   </div>
   
-  <!-- Expanded Card Modal (hidden by default) -->
-  <div id="expandedCardModal" class="modal" style="display: none;">
+  <!-- Filter Section (hidden by default) -->
+  <section id="filterSection" style="display: none;">
+    <h2>Filter by District and State</h2>
+    <form id="filterForm">
+      <label for="stateSelect">State:</label>
+      <select id="stateSelect" name="stateSelect" required>
+        <option value="">Select State</option>
+      </select>
+      <label for="districtSelect">District:</label>
+      <select id="districtSelect" name="districtSelect" required>
+        <option value="">Select District</option>
+      </select>
+      <button type="submit">Apply Filter</button>
+    </form>
+  </section>
+  
+  <!-- Donors Section -->
+  <section id="donorsSection" style="display: none;">
+    <h2>Registered Donors</h2>
+    <div id="donorList"></div>
+  </section>
+  
+  <!-- Blood Requests Section -->
+  <section id="requestsSection" style="display: none;">
+    <h2>Blood Requests</h2>
+    <div id="requestList"></div>
+  </section>
+  
+  <!-- Expanded Card Modal (More Info) -->
+  <div id="expandedCardModal" class="modal">
     <div class="modal-content" id="expandedCardModalContent">
       <button id="closeExpandedCardBtn">Close</button>
       <div id="expandedCardDetails" style="margin-top: 15px; text-align: center;"></div>
     </div>
   </div>
   
-  <main>
-    <section id="filterSection">
-      <h2>Filter by District and State</h2>
-      <form id="filterForm">
-        <label for="stateSelect">State:</label>
-        <select id="stateSelect" name="stateSelect" required>
-          <option value="">Select State</option>
-        </select>
-        <label for="districtSelect">District:</label>
-        <select id="districtSelect" name="districtSelect" required>
-          <option value="">Select District</option>
-        </select>
-        <button type="submit">Apply Filter</button>
-      </form>
-    </section>
-    
-    <section id="donorsSection" style="display:none;">
-      <h2>Registered Donors</h2>
-      <div id="donorList"></div>
-    </section>
-    
-    <section id="requestsSection" style="display:none;">
-      <h2>Blood Requests</h2>
-      <div id="requestList"></div>
-    </section>
-  </main>
-  
+  <!-- Main script references -->
   <script src="js/script.js"></script>
-  
   <script>
-    document.getElementById('logoutBtn').addEventListener('click', function(){
+    // Remove 'logoutBtn' from the main nav; place logout in side menu
+    // So we no longer have a 'logoutBtn' in nav.
+    
+    // Toggle the side menu open/close
+    function toggleSideMenu() {
+      const sideMenu = document.getElementById('sideMenu');
+      sideMenu.classList.toggle('open');
+    }
+    
+    // Logout function
+    function logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
       window.location.href = "login.html";
-    });
+    }
     
-    window.userType = "";
-    
+    // If user selects "need" or "donate," hide userTypeSelection and show filterSection
     document.getElementById('needBloodBtn').addEventListener('click', function(){
       window.userType = "need";
-      document.getElementById('userTypeModal').style.display = 'none';
-      alert("Please select your State and District to view donors available in your area.");
+      document.getElementById('userTypeSelection').style.display = 'none';
+      document.getElementById('filterSection').style.display = 'block';
     });
     
     document.getElementById('donateBloodBtn').addEventListener('click', function(){
       window.userType = "donate";
-      document.getElementById('userTypeModal').style.display = 'none';
-      alert("Please select your State and District to view blood requests in your area.");
+      document.getElementById('userTypeSelection').style.display = 'none';
+      document.getElementById('filterSection').style.display = 'block';
     });
     
+    // Close More Info modal
     document.getElementById('closeExpandedCardBtn').addEventListener('click', function(){
       document.getElementById('expandedCardModal').style.display = 'none';
     });
-    
-    function updateChatBadge() {
-      fetch('/api/messages/unread', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      .then(response => response.json())
-      .then(counts => {
-        let totalUnread = 0;
-        for (let key in counts) {
-          totalUnread += counts[key];
-        }
-        const badge = document.getElementById('chatBadge');
-        if (totalUnread > 0) {
-          badge.innerText = totalUnread;
-          badge.style.backgroundColor = 'red';
-          badge.style.color = 'white';
-          badge.style.padding = '2px 6px';
-          badge.style.borderRadius = '50%';
-          badge.style.fontSize = '0.8rem';
-          badge.style.marginLeft = '5px';
-        } else {
-          badge.innerText = '';
-        }
-      })
-      .catch(error => console.error("Error fetching unread messages:", error));
-    }
-    
-    setInterval(updateChatBadge, 5000);
-    updateChatBadge();
   </script>
 </body>
 </html>

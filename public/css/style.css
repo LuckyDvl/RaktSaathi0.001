@@ -1,3 +1,5 @@
+/* public/css/style.css */
+
 /* Base Styles */
 body {
   font-family: Arial, sans-serif;
@@ -44,10 +46,128 @@ nav button:hover {
   background-color: #ffe0b2;
   color: #d32f2f;
 }
+/* New Heading & Jingle Styles */
+/* Container for the image + heading side by side */
 
-/* New Button Classes for Pop-Up and Cards */
+/* Position and style the top portion with hamburger & heading side by side */
+/* Header Layout */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
 
-/* Buttons in the pop-up modal (e.g. "In Need of Blood" and "Interested in Donating Blood") */
+/* Hamburger Menu Icon */
+.hamburger {
+  position: absolute;
+  left: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hamburger .line {
+  width: 25px;
+  height: 3px;
+  background-color: #fff;
+}
+
+/* Side Menu (Hidden Off-Screen Initially) */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 260px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+  transition: left 0.3s ease-in-out;
+  z-index: 2000;
+  padding-top: 20px;
+}
+
+/* Show Side Menu When Open */
+.side-menu.open {
+  left: 0;
+}
+
+/* Close Button */
+#closeMenuBtn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d32f2f;
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 20px;
+}
+
+.side-menu li {
+  margin: 15px 0;
+}
+
+.side-menu li a {
+  display: block;
+  color: #d32f2f;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease-in-out;
+}
+
+.side-menu li a:hover {
+  color: #b71c1c;
+}
+
+/* Blood Drop Icon */
+.blood-drop-icon {
+  width: 40px;
+  margin-right: 10px;
+}
+
+/* Header Title */
+.header-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* R and S Styling */
+.app-heading {
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+.rs-big {
+  font-size: 3rem;
+  color: #000000;
+}
+
+/* Jingle Styling */
+.jingle {
+  font-size: 1rem;
+  text-align: center;
+  font-style: italic;
+  color: #ffffff;
+}
+
+
+/* (The rest of your existing styles remain unchanged) */
+.header-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* New Button Classes for Pop-Up and Cards (red buttons) */
 .action-btn {
   background-color: #d32f2f;
   color: #fff;
@@ -58,26 +178,8 @@ nav button:hover {
   margin: 5px;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
-
 .action-btn:hover {
   background-color: #b71c1c;
-  transform: scale(1.05);
-}
-
-/* Buttons on the cards (More Info and Message) and in the expanded modal */
-.card-btn {
-  background-color: #3897f0;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: transform 0.3s ease, background-color 0.3s ease;
-  margin: 4px;
-}
-
-.card-btn:hover {
-  background-color: #4ea2f5;
   transform: scale(1.05);
 }
 
@@ -96,16 +198,13 @@ form {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   transition: box-shadow 0.3s ease;
 }
-
 form:hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-
 form label {
   display: block;
   margin-top: 10px;
 }
-
 form input, form select, form textarea {
   width: 100%;
   padding: 8px;
@@ -113,11 +212,9 @@ form input, form select, form textarea {
   box-sizing: border-box;
   transition: border-color 0.3s ease;
 }
-
 form input:focus, form select:focus, form textarea:focus {
   border-color: #d32f2f;
 }
-
 form button {
   margin-top: 15px;
   padding: 10px 15px;
@@ -128,7 +225,6 @@ form button {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
-
 form button:hover {
   background-color: #b71c1c;
   transform: scale(1.05);
@@ -140,7 +236,6 @@ form button:hover {
   margin-right: 15px;
   transition: color 0.3s ease;
 }
-
 .radio-group label:hover {
   color: #d32f2f;
 }
@@ -159,12 +254,9 @@ form button:hover {
   z-index: 1000;
   transition: opacity 0.3s ease;
 }
-
-/* Hide all modals by default except for userTypeModal */
 .modal:not(#userTypeModal) {
   display: none;
 }
-
 .modal-content {
   background-color: #fff;
   padding: 20px;
@@ -172,21 +264,19 @@ form button:hover {
   text-align: center;
   transition: transform 0.3s ease;
 }
-
 .modal-content:hover {
   transform: scale(1.02);
 }
 
-/* Force the expanded pop-up (More Info) to be smaller */
+/* Make the Expanded Card Modal smaller */
 #expandedCardModal .modal-content {
   width: 90% !important;
-  max-width: 350px !important;  /* Reduced from 600px or 400px to 350px */
-  padding: 10px !important;     /* Adjust padding as needed */
+  max-width: 350px !important;
+  padding: 10px !important;
   margin: 20px auto !important;
 }
 
-
-/* Filter Section */
+/* Filter Section (hidden by default; will be shown after user type selection) */
 #filterSection {
   background-color: #fff;
   padding: 15px;
@@ -195,24 +285,21 @@ form button:hover {
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   transition: transform 0.3s ease;
+  display: none;
 }
-
 #filterSection:hover {
   transform: translateY(-3px);
 }
-
 #filterSection form {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
 }
-
 #filterSection label {
   flex: 1;
   min-width: 80px;
 }
-
 #filterSection select {
   flex: 2;
 }
@@ -224,7 +311,6 @@ form button:hover {
   gap: 20px;
   justify-content: center;
 }
-
 .donor-card {
   background-color: #fff;
   width: 280px;
@@ -235,16 +321,13 @@ form button:hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
-
 .donor-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
-
 .donor-pic-wrapper {
   margin-bottom: 10px;
 }
-
 .profile-pic-circle {
   width: 100px;
   height: 100px;
@@ -254,22 +337,18 @@ form button:hover {
   margin: 0 auto;
   transition: transform 0.3s ease;
 }
-
 .profile-pic-circle:hover {
   transform: scale(1.1);
 }
-
 .donor-name {
   margin: 10px 0 5px;
   font-size: 1.2rem;
   font-weight: bold;
 }
-
 .donor-subtitle {
   color: #777;
   margin: 5px 0;
 }
-
 .donor-info {
   font-size: 0.9rem;
   margin: 3px 0;
@@ -282,7 +361,6 @@ form button:hover {
   gap: 20px;
   justify-content: center;
 }
-
 .request-card {
   background-color: #fff;
   width: 280px;
@@ -293,18 +371,15 @@ form button:hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
-
 .request-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
-
 .request-name {
   margin: 10px 0 5px;
   font-size: 1.2rem;
   font-weight: bold;
 }
-
 .request-info {
   font-size: 0.9rem;
   margin: 3px 0;
@@ -316,12 +391,10 @@ form button:hover {
   max-width: 260px;
   margin: 10px auto 0;
 }
-
 .mySlide {
   display: none;
   text-align: center;
 }
-
 .mySlide img,
 .mySlide video {
   max-width: 260px;
@@ -346,15 +419,12 @@ form button:hover {
   user-select: none;
   transition: background-color 0.3s ease;
 }
-
 .prev:hover, .next:hover {
   background-color: rgba(0,0,0,0.8);
 }
-
 .prev {
   left: 5px;
 }
-
 .next {
   right: 5px;
 }
@@ -365,7 +435,6 @@ form button:hover {
   height: 90vh;
   background-color: #f2f2f2;
 }
-
 #chatSidebar {
   width: 30%;
   border-right: 1px solid #ccc;
@@ -374,17 +443,14 @@ form button:hover {
   background-color: #fff;
   transition: background-color 0.3s ease;
 }
-
 #chatSidebar h2 {
   margin-top: 0;
   color: #000;
 }
-
 #chatSidebar ul {
   list-style: none;
   padding: 0;
 }
-
 .contact-item {
   padding: 8px;
   margin-bottom: 5px;
@@ -393,12 +459,10 @@ form button:hover {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
-
 .contact-item:hover {
   background-color: #eaeaea;
   transform: translateX(3px);
 }
-
 #chatMain {
   width: 70%;
   display: flex;
@@ -406,23 +470,19 @@ form button:hover {
   padding: 10px;
   background-color: #fff;
 }
-
 #chatHeader {
   border-bottom: 1px solid #ccc;
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
-
 #chatHeader h3 {
   margin: 0;
   color: #000;
 }
-
 #chatHeader .profile-info {
   color: #555;
   font-size: 0.9rem;
 }
-
 #messages {
   flex: 1;
   overflow-y: auto;
@@ -432,22 +492,18 @@ form button:hover {
   color: #000;
   transition: background-color 0.3s ease;
 }
-
 .message-item {
   margin: 5px 0;
   word-wrap: break-word;
 }
-
 .message-username {
   font-weight: bold;
   margin-right: 5px;
   color: #000;
 }
-
 .message-text {
   color: #333;
 }
-
 .message-image {
   max-width: 150px;
   max-height: 150px;
@@ -455,17 +511,14 @@ form button:hover {
   border-radius: 5px;
   transition: transform 0.3s ease;
 }
-
 .message-image:hover {
   transform: scale(1.05);
 }
-
 #messageForm {
   display: flex;
   margin-top: 10px;
   gap: 5px;
 }
-
 #messageInput {
   flex: 1;
   padding: 8px;
@@ -475,11 +528,9 @@ form button:hover {
   color: #000;
   transition: border-color 0.3s ease;
 }
-
 #messageInput:focus {
   border-color: #d32f2f;
 }
-
 #imageInput {
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -488,11 +539,9 @@ form button:hover {
   padding: 5px;
   transition: border-color 0.3s ease;
 }
-
 #imageInput:focus {
   border-color: #d32f2f;
 }
-
 #messageSendBtn {
   background-color: #3897f0;
   color: #fff;
@@ -502,7 +551,6 @@ form button:hover {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
-
 #messageSendBtn:hover {
   background-color: #4ea2f5;
   transform: scale(1.05);
@@ -521,20 +569,17 @@ form button:hover {
   justify-content: center;
   z-index: 2000;
 }
-
 #imageModalContent {
   position: relative;
   max-width: 90%;
   max-height: 90%;
 }
-
 #imageModalContent img {
   width: auto;
   height: auto;
   max-width: 100%;
   max-height: 100%;
 }
-
 #closeImageModalBtn {
   position: absolute;
   top: 10px;
@@ -548,7 +593,6 @@ form button:hover {
   font-weight: bold;
   transition: transform 0.3s ease;
 }
-
 #closeImageModalBtn:hover {
   transform: scale(1.1);
 }
@@ -563,28 +607,23 @@ form button:hover {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   transition: transform 0.3s ease;
 }
-
 #adminContainer:hover {
   transform: translateY(-3px);
 }
-
 table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
 }
-
 th, td {
   border: 1px solid #ccc;
   padding: 8px;
   text-align: left;
   transition: background-color 0.3s ease;
 }
-
 th {
   background-color: #f2f2f2;
 }
-
 button.deleteBtn {
   background-color: #d32f2f;
   color: #fff;
@@ -594,7 +633,6 @@ button.deleteBtn {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
-
 button.deleteBtn:hover {
   background-color: #b71c1c;
   transform: scale(1.05);

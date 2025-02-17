@@ -1,5 +1,4 @@
-// public/js/script.js
-// Plain JavaScript (no Node require calls).
+"use strict";
 
 // Mapping of Indian states and their districts
 const stateDistrictMapping = {
@@ -29,10 +28,10 @@ const stateDistrictMapping = {
   ]
 };
 
+// Initialize the filter UI
 function initFilterUI() {
   const stateSelect = document.getElementById('stateSelect');
   const districtSelect = document.getElementById('districtSelect');
-  
   stateSelect.innerHTML = '<option value="">Select State</option>';
   for (const state in stateDistrictMapping) {
     const option = document.createElement('option');
@@ -40,7 +39,6 @@ function initFilterUI() {
     option.textContent = state;
     stateSelect.appendChild(option);
   }
-  
   stateSelect.addEventListener('change', function() {
     const selectedState = this.value;
     districtSelect.innerHTML = '<option value="">Select District</option>';
@@ -62,6 +60,7 @@ function initFilterUI() {
   });
 }
 
+// Decide whether to load donors or requests based on userType
 function applyFilter(filterState, filterDistrict) {
   if (window.userType === "need") {
     loadDonors(filterState, filterDistrict);
@@ -76,6 +75,7 @@ function applyFilter(filterState, filterDistrict) {
   }
 }
 
+// Helper to format address
 function formatAddress(addr) {
   if (!addr) return '';
   const parts = [];
@@ -86,6 +86,7 @@ function formatAddress(addr) {
   return parts.join(', ');
 }
 
+// Slideshow management
 const slideIndexMap = {};
 function plusSlides(n, containerId) {
   showSlides(slideIndexMap[containerId] + n, containerId);
@@ -101,21 +102,11 @@ function showSlides(n, containerId) {
   });
 }
 
-// -------------- Expanded Card Modal Feature -------------- //
-/**
- * Opens the expanded details modal and shows all information.
- * Also includes a message box and a "Send Message" button.
- * @param {Object} data - The donor or recipient object.
- * @param {Boolean} isDonor - True if donor; false if recipient.
- */
+// Show expanded "More Info" modal
 function showExpandedDetails(data, isDonor) {
   const modal = document.getElementById('expandedCardModal');
   const detailsDiv = document.getElementById('expandedCardDetails');
-  
-  // Save the target user id (from the createdBy field) for sending messages later.
   window.expandedMessageTargetUserId = data.createdBy;
-  
-  // Build HTML string with all details.
   let html = `<h2>${isDonor ? "Donor Details" : "Recipient Details"}</h2>`;
   html += `<p><strong>Name:</strong> ${data.name}</p>`;
   if (data.fatherName) {
@@ -157,24 +148,19 @@ function showExpandedDetails(data, isDonor) {
       html += `<video src="${data.video}" controls style="max-width:200px;display:block;margin:5px auto;"></video>`;
     }
   }
-  
-  // Add a message input box and a Send Message button.
   if (data.createdBy) {
     html += `
       <div id="expandedMessageContainer" style="margin-top:15px;">
         <textarea id="expandedMessageInput" placeholder="Type your message here" style="width:100%;"></textarea>
-        <button onclick="sendExpandedMessage()">Send Message</button>
+        <button class="action-btn" onclick="sendExpandedMessage()">Send Message</button>
       </div>
     `;
   }
-  
   detailsDiv.innerHTML = html;
   modal.style.display = 'flex';
 }
 
-/**
- * Sends the message typed in the expanded modal.
- */
+// Send message from "More Info" modal
 function sendExpandedMessage() {
   const messageContent = document.getElementById('expandedMessageInput').value.trim();
   if (!messageContent) {
@@ -205,10 +191,8 @@ function sendExpandedMessage() {
     alert("Error sending message.");
   });
 }
-// ------------------------------------------------------------ //
 
-
-// Start chat: redirect to chat.html with target user id in query param.
+// Start chat with a user
 function startChat(targetUserId) {
   if (!targetUserId) {
     alert("This user is not available for messaging.");
@@ -217,7 +201,7 @@ function startChat(targetUserId) {
   window.location.href = "chat.html?withUserId=" + targetUserId;
 }
 
-// Load donors and render cards.
+// Load donors
 function loadDonors(filterState, filterDistrict) {
   fetch('/api/donors')
     .then(response => response.json())
@@ -250,8 +234,8 @@ function loadDonors(filterState, filterDistrict) {
               <p class="donor-info"><strong>Address:</strong> ${addressStr}</p>
               <p class="donor-info"><strong>Previously Donated:</strong> ${donor.previouslyDonated}</p>
               <p class="donor-info"><strong>Health Issues:</strong> ${donor.healthIssues || "None"}</p>
-              <button onclick='showExpandedDetails(${JSON.stringify(donor)}, true)'>More Info</button>
-              <button onclick="startChat(${donor.createdBy})">Message</button>
+              <button class="action-btn" onclick='showExpandedDetails(${JSON.stringify(donor)}, true)'>More Info</button>
+              <button class="action-btn" onclick="startChat(${donor.createdBy})">Message</button>
             </div>
           `;
         });
@@ -265,7 +249,7 @@ function loadDonors(filterState, filterDistrict) {
     });
 }
 
-// Load blood requests and render cards.
+// Load requests
 function loadBloodRequests(filterState, filterDistrict) {
   fetch('/api/requests')
     .then(response => response.json())
@@ -323,8 +307,8 @@ function loadBloodRequests(filterState, filterDistrict) {
               <p class="request-info"><strong>Address:</strong> ${addressStr}</p>
               <p class="request-info"><strong>Emergency:</strong> ${request.emergency}</p>
               ${slideshowContainer}
-              <button onclick='showExpandedDetails(${JSON.stringify(request)}, false)'>More Info</button>
-              <button onclick="startChat(${request.createdBy})">Message</button>
+              <button class="action-btn" onclick='showExpandedDetails(${JSON.stringify(request)}, false)'>More Info</button>
+              <button class="action-btn" onclick="startChat(${request.createdBy})">Message</button>
             </div>
           `;
         });
@@ -338,4 +322,5 @@ function loadBloodRequests(filterState, filterDistrict) {
     });
 }
 
+// Initialize
 initFilterUI();
