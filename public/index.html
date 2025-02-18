@@ -4,11 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>RaktSaathi - Home</title>
+  <!-- NProgress CSS & JS from CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
   <link rel="stylesheet" href="css/style.css" />
   <script>
-    // if (!localStorage.getItem('token')) {
-    //   window.location.href = "login.html";
-    // }
+    if (!localStorage.getItem('token')) {
+      window.location.href = "login.html";
+    }
   </script>
 </head>
 <body>
@@ -80,7 +83,7 @@
   <!-- Expanded Card Modal -->
   <div id="expandedCardModal" class="modal">
     <div class="modal-content" id="expandedCardModalContent">
-      <button id="closeExpandedCardBtn">Close</button>
+      <button id="closeExpandedCardBtn" style="size: 50px; color: rgb(255, 255, 255); background-color: red; border: 1px solid rgb(165, 3, 3);">Close</button>
       <div id="expandedCardDetails" style="margin-top: 15px; text-align: center;"></div>
     </div>
   </div>
@@ -139,6 +142,37 @@
       10. Encourages healthy lifestyle habits overall.
     </li>
   </ul>
+    <!-- Stats Container (absolute to the right, vertically centered) -->
+    <div id="statsContainer" style="
+    position:absolute;
+    right:0;
+    top:60%;
+    transform: translateY(-50%);
+    width:220px;">
+    <!-- Blood Requests Count (Red) -->
+    <div id="requestsCountDiv"
+         onclick="showRequestsSection()" 
+         style="cursor:pointer; color:red; background:#f1f1f1; padding:10px; margin-bottom:10px; transition:0.3s; border-radius:5px;"
+         onmouseover="this.style.transform='scale(1.05)';" 
+         onmouseout="this.style.transform='';">
+      <strong>Total Requests:</strong> <span id="requestsCountValue">99</span>
+    </div>
+    <!-- Blood Donors Count (Green) -->
+    <div id="donorsCountDiv" 
+         onclick="showDonorsSection()"
+         style="cursor:pointer; color:green; background:#f1f1f1; padding:10px; transition:0.3s; border-radius:5px;"
+         onmouseover="this.style.transform='scale(1.05)';" 
+         onmouseout="this.style.transform='';">
+      <strong>Total Donors:</strong> <span id="donorsCountValue">123</span>
+    </div>
+    <!-- Insert your image right below the counters -->
+    <img id="statsImage"
+         src="images/hand shake.jpg"
+         alt="Extra Blood Donation Image"
+         style="width:180px; margin-top:10px; border-radius:5px; transition:0.2s;"
+         onmouseover="this.style.transform='scale(1.05)';"
+         onmouseout="this.style.transform='';">
+  </div>
 </section>
   <!-- Footer -->
   <footer class="page-footer">
@@ -160,6 +194,21 @@
       const sideMenu = document.getElementById('sideMenu');
       sideMenu.classList.toggle('open');
     }
+     // Show requests on click
+     function showRequestsSection(){
+      document.getElementById('requestsSection').style.display = 'block';
+      document.getElementById('donorsSection').style.display = 'none';
+      window.scrollTo({ top: document.getElementById('requestsSection').offsetTop, behavior: 'smooth' });
+    }
+    // Show donors on click
+    function showDonorsSection(){
+      document.getElementById('donorsSection').style.display = 'block';
+      document.getElementById('requestsSection').style.display = 'none';
+      window.scrollTo({ top: document.getElementById('donorsSection').offsetTop, behavior: 'smooth' });
+    }
+    // If you want dynamic counts, e.g. fetch from server
+    // document.getElementById('requestsCountValue').textContent = ...
+    // document.getElementById('donorsCountValue').textContent = ...
     document.getElementById('needBloodBtn').addEventListener('click', function(){
       window.userType = "need";
       document.getElementById('userTypeSelection').style.display = 'none';

@@ -152,7 +152,7 @@ nav button:hover {
 
 .rs-big {
   font-size: 3rem;
-  color: #000000;
+  color: #ffffff;
 }
 
 /* Jingle Styling */
@@ -348,9 +348,14 @@ form button:hover {
 /* Make the Expanded Card Modal smaller */
 #expandedCardModal .modal-content {
   width: 90% !important;
-  max-width: 350px !important;
+  max-width: 450px !important;
+  max-height: 600px;
   padding: 10px !important;
   margin: 20px auto !important;
+
+  /* New properties to make it scrollable if content is large */
+  /* max-height: 80vh;       or 70vh, 60vh, etc. */
+  overflow-y: auto;       /* adds vertical scrollbar if needed */
 }
 
 /* Filter Section (hidden by default; will be shown after user type selection) */
@@ -771,4 +776,130 @@ button.deleteBtn:hover {
     margin-bottom: 10px;
     left: auto;
   }
+}
+/* Adjust green line color */
+#nprogress .bar {
+  background: #00cc66 !important; /* bright green */
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px #00cc66, 0 0 5px #00cc66 !important;
+}
+/* Basic skeleton shimmer animation */
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* .skeleton base styles */
+.skeleton {
+  background-color: #eee;
+  background-image: linear-gradient(
+    90deg,
+    #eee 25%,
+    #ddd 37%,
+    #eee 63%
+  );
+  background-size: 400px 100%;
+  background-repeat: no-repeat;
+  display: block;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  animation: skeletonShimmer 1.2s ease-in-out infinite;
+}
+
+/* Varying heights & widths for demonstration */
+.skeleton-header {
+  width: 50%;
+  height: 30px;
+}
+.skeleton-paragraph {
+  width: 80%;
+  height: 18px;
+}
+.skeleton-card {
+  width: 100%;
+  height: 120px;
+  margin-top: 20px;
+}
+/* Force html/body to take full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* For pages like login.html, signup.html, etc. */
+.login-page {
+  display: flex;
+  flex-direction: column; 
+  min-height: 100vh; /* Full viewport height */
+}
+
+/* main takes up remaining space, pushing footer to bottom */
+.login-page main {
+  flex: 1; /* This grows and pushes footer down */
+}
+
+/* Footer styling (already existing) */
+.page-footer {
+  background-color: #222222;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+.page-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+.page-footer a:hover {
+  text-decoration: underline;
+}
+.chat-container {
+  display: flex;
+  height: calc(100vh - 160px);
+  background-color: #f2f2f2;
+  flex-direction: column; /* If you want the top bar inside it, or do row if you do side bar */
+}
+
+.chat-topbar {
+  background-color: #fff;
+  padding: 10px;
+  display: flex;
+  gap: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.chat-header {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
+
+.chat-input {
+  display: flex;
+  gap: 5px;
+}
+.chat-input input {
+  flex: 1;
+  padding: 8px;
 }

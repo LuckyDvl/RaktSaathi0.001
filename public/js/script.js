@@ -59,15 +59,56 @@ function initFilterUI() {
     applyFilter(selectedState, selectedDistrict);
   });
 }
+
+function startLoading() {
+  NProgress.start();
+}
+
+function stopLoading() {
+  NProgress.done();
+}
+
+// script.js snippet
+
+function showSkeleton() {
+  document.getElementById('skeletonContainer').style.display = 'block';
+  // e.g. hide the real donors list
+  const donorList = document.getElementById('donorList');
+  if (donorList) donorList.style.display = 'none';
+}
+
+function hideSkeleton() {
+  document.getElementById('skeletonContainer').style.display = 'none';
+  // show real donors
+  const donorList = document.getElementById('donorList');
+  if (donorList) donorList.style.display = 'block';
+}
+
+// Example usage when fetching donors:
+function loadDonors() {
+  showSkeleton();
+  fetch('/api/donors')
+    .then(r => r.json())
+    .then(data => {
+      // ... render data in #donorList ...
+    })
+    .finally(() => {
+      // once done
+      hideSkeleton();
+    });
+}
+
 // Donor form
 document.getElementById('donorForm')?.addEventListener('submit', function(event) {
   event.preventDefault();
+  startLoading(); // start the line
   const selectedBloodGroup = document.querySelector('input[name="bloodGroup"]:checked');
   if (!selectedBloodGroup) {
     alert("Please select a blood group.");
     return;
   }
   console.log("Donor: selected blood group =", selectedBloodGroup.value);
+  stopLoading(); // hide the line
 });
 
 // Request form

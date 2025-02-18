@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -183,22 +183,22 @@
     </div>
   </main>
   
-  <!-- Fullscreen image modal -->
-  <div id="imageModal">
+   Fullscreen image modal -->
+  <!-- <div id="imageModal">
     <div id="imageModalContent">
       <button id="closeImageModalBtn">X</button>
       <img id="fullscreenImage" src="" alt="Fullscreen Image">
     </div>
   </div>
-  <!-- Footer -->
-  <footer class="page-footer">
+   Footer -->
+  <!-- <footer class="page-footer">
     <div class="footer-content">
       <p>© Team Error</p>
       <p><a href="aboutus.html">About Us</a> | Contact Us | <a href="https://github.com/LuckyDvl" target="_blank">GitHub/LuckyDvl</a></p>
       <p>Team Members: Suhani Pal, Yash Kumar Verma, Ekansh Vaish, Lucky Gupta</p>
     </div>
-  </footer>
-  <script>
+  </footer> -->
+  <!-- <script>
     const token = localStorage.getItem('token');
     const userId = parseInt(localStorage.getItem('userId'));
     let userMap = {};  // userId -> { username, fullName, bio }
@@ -325,6 +325,170 @@
     
     // Load contacts on page load
     loadContacts();
+  </script>
+</body> -->
+</html> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat - RaktSaathi</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Side Menu (if you’re using the hamburger layout everywhere) -->
+  <div id="sideMenu" class="side-menu">
+    <button id="closeMenuBtn" onclick="toggleSideMenu()">×</button>
+    <ul>
+      <li><a href="profile.html">My Profile</a></li>
+      <li><a href="mydonations.html">My Donations</a></li>
+      <li><a href="emergency.html">Emergency Alerts</a></li>
+      <li><a href="faqs.html">FAQS</a></li>
+      <li><a href="#" onclick="logout()">Log Out</a></li>
+      <li><a href="#">Share Our Service</a></li>
+      <li><a href="#">Map (Heat Map)</a></li>
+    </ul>
+  </div>
+
+  <header>
+    <div class="header-top">
+      <div class="hamburger" onclick="toggleSideMenu()">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+      <div class="header-title">
+        <img src="images/blood-drop.png" alt="Blood Drop" class="blood-drop-icon">
+        <h1 class="app-heading"><span class="rs-big">R</span>akt<span class="rs-big">S</span>aathi</h1>
+      </div>
+    </div>
+    <p class="jingle">jab zaroorat rakt ki, mai saathi aap ka</p>
+      <nav>
+        <a href="index.html">Home</a> |
+        <a href="donor.html">Register as Donor</a> |
+        <a href="request.html">Request Blood</a> |
+        <a href="chat.html">Chat</a> |
+        <a href="profile.html">Customize Profile</a> |
+        <button id="logoutBtn">Logout</button>
+      </nav>
+  </header>
+
+  <!-- Main Chat Container -->
+  <div id="chatContainer" class="chat-container">
+    <!-- Sidebar for contacts -->
+    <div id="chatSidebar" class="chat-sidebar">
+      <h2>Contacts</h2>
+      <ul id="contactList">
+        <li class="contact-item" onclick="openConversation('errorTeam')">errorTeam</li>
+        <li class="contact-item" onclick="openConversation('errorTeam2')">errorTeam2</li>
+        <!-- Add more contacts as needed -->
+      </ul>
+    </div>
+
+    <!-- Main chat area -->
+    <div id="chatMain" class="chat-main">
+      <div id="chatHeader" class="chat-header">
+        <h3 id="chatWithUser">Select a contact</h3>
+        <p class="profile-info">No conversation selected</p>
+      </div>
+      <div id="messages" class="chat-messages">
+        <!-- Messages will appear here dynamically -->
+      </div>
+      <form id="messageForm" class="chat-input">
+        <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+        <button type="submit" id="messageSendBtn">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div class="footer-content">
+      <p>© Team Error</p>
+      <p><a href="aboutus.html">About Us</a> | Contact Us | <a href="https://github.com/LuckyDvl" target="_blank">GitHub/LuckyDvl</a></p>
+      <p>Team Members: Suhani Pal, Yash Kumar Verma, Ekansh Vaish, Lucky Gupta</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+    const currentUser = localStorage.getItem('username') || 'errorTeam'; 
+    // or fetch from your login system; for now let's assume 'errorTeam' is logged in
+
+    // Elements
+    const otherUsernameInput = document.getElementById('otherUsername');
+    const startChatBtn = document.getElementById('startChatBtn');
+    const messageForm = document.getElementById('messageForm');
+    const messageInput = document.getElementById('messageInput');
+    const messagesDiv = document.getElementById('messages');
+    const chatWithUser = document.getElementById('chatWithUser');
+
+    let currentOtherUser = null;
+    let pollingInterval = null;
+
+    // Start chat with the typed username
+    startChatBtn.addEventListener('click', function(){
+      const other = otherUsernameInput.value.trim();
+      if(!other || other === currentUser){
+        alert("Please enter a valid, different username.");
+        return;
+      }
+      currentOtherUser = other;
+      chatWithUser.textContent = `Chat with ${other}`;
+      messageForm.style.display = 'flex';
+      messagesDiv.innerHTML = '';
+      // Start polling for messages
+      if(pollingInterval) clearInterval(pollingInterval);
+      loadMessages(); // first load
+      pollingInterval = setInterval(loadMessages, 3000); // poll every 3s
+    });
+
+    // Load messages from server
+    function loadMessages(){
+      if(!currentOtherUser) return;
+      fetch(`/api/messages?from=${currentUser}&to=${currentOtherUser}`)
+        .then(res => res.json())
+        .then(msgs => {
+          messagesDiv.innerHTML = ''; 
+          // Display each message
+          msgs.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'message-item';
+            let senderLabel = (m.from === currentUser) ? 'You' : m.from;
+            div.innerHTML = `<strong>${senderLabel}:</strong> ${m.content}`;
+            messagesDiv.appendChild(div);
+          });
+          // auto scroll to bottom
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        })
+        .catch(e => console.error("Error loading messages:", e));
+    }
+
+    // Send message
+    messageForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(!currentOtherUser) return;
+      const content = messageInput.value.trim();
+      if(!content) return;
+      // post to server
+      fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: currentUser,
+          to: currentOtherUser,
+          content
+        })
+      })
+      .then(res => res.json())
+      .then(msg => {
+        // Clear input, reload messages
+        messageInput.value = '';
+        loadMessages();
+      })
+      .catch(e => console.error("Error sending message:", e));
+    });
   </script>
 </body>
 </html>
